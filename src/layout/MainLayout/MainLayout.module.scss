@@ -1,0 +1,16 @@
+.wrapper {
+    background-color: #f5f5f9;
+
+    .right-content {
+    }
+
+    .right-content_nav {
+        width: calc(100% - (1.625rem * 2));
+        max-width: calc(1440px - calc(1.625rem * 2));
+    }
+
+    .right-content_child {
+        width: calc(100% - (1.625rem * 2));
+        max-width: calc(1440px - calc(1.625rem * 2));
+    }
+}

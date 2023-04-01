@@ -1,11 +1,11 @@
 import "./GlobalStyle.scss";
 
 type ChildrenProps = {
-    children: JSX.Element 
-}
+  children: JSX.Element;
+};
 
 function GlobalStyle({ children }: ChildrenProps) {
-    return children;
+  return children;
 }
 
 export default GlobalStyle;

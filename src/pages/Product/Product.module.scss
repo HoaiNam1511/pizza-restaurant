@@ -1,0 +1,27 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+
+.wrapper {
+    .product {
+        min-height: calc(100vh - 150px);
+        background-color: #ffffff;
+        border-radius: 6px;
+        margin-top: 20px;
+    }
+
+    .product-header {
+        padding: 10px 15px 0px;
+    }
+
+    .product-header_title {
+    }
+
+    .product-header_btn {
+        @include primary-btn;
+    }
+
+    //Table
+    .table-container {
+        margin-top: 30px;
+    }
+}

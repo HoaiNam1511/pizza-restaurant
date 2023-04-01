@@ -1,0 +1,80 @@
+@import "../../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../../scss/mixin";
+
+.wrapper-content {
+    min-height: 100px;
+
+    .form {
+    }
+
+    .form-item + .form-item {
+        margin-top: 10px;
+    }
+
+    .label {
+        text-align: start;
+        display: block;
+        font-size: 1.4rem;
+        font-weight: 400;
+    }
+
+    .input {
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #cfcfcf;
+        font-size: 1.6rem;
+        height: 32px;
+        outline: none;
+        padding: 0 10px;
+        color: $text-color;
+        font-weight: 400;
+    }
+
+    .aria {
+        min-height: 120px;
+        padding: 5px 10px;
+    }
+
+    //Upload
+    .image-container {
+        margin-top: 10px;
+    }
+    .upload {
+    }
+    .upload-container {
+        border: 1px solid #cfcfcf;
+        border-radius: 6px;
+        height: 90px;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    .upload-icon {
+        font-size: 2.4rem;
+        color: $text-color;
+    }
+    .upload-title {
+        font-size: 1.4rem;
+        color: $text-color;
+    }
+
+    .image {
+        object-fit: cover;
+        width: 100px;
+        height: 100%;
+    }
+
+    .empty-image {
+        position: relative;
+        top: 50%;
+        font-size: 5rem;
+        color: $text-color;
+        transform: translateY(-50%);
+    }
+
+    .btn-add {
+        margin-top: 15px;
+        @include primary-btn;
+        width: 80px;
+    }
+}
