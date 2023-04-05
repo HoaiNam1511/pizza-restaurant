@@ -1,0 +1,35 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+$paddingPagination: 6px;
+.wrapper {
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+.pagination-btn {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-btn a {
+    padding: $paddingPagination;
+    margin: 0px 2px;
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.active {
+    color: white;
+}
+
+.active a {
+    background-color: $primary-color;
+}
+
+.pagination-btn a:hover {
+    background-color: $primary-color;
+    color: white;
+}

@@ -20,3 +20,22 @@
         color: #ffffff;
     }
 }
+
+@mixin input-custom_1 {
+    width: 100%;
+    border-radius: $main-border-radius;
+    border: $main-border;
+    font-size: 1.6rem;
+    height: 32px;
+    outline: none;
+    padding: 0 10px;
+    color: $text-color;
+    font-weight: 400;
+    border: 1px solid #ccc;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+    &:focus {
+        border: 1px solid $primary-color;
+    }
+}

@@ -3,9 +3,14 @@ import styles from "./Sidebar.module.scss";
 import classNames from "classnames/bind";
 import brandLogo from "../../../../assets/image/ggz5_8m3m_210608.jpg";
 import { NavLink } from "react-router-dom";
-import HomeIcon from "@mui/icons-material/Home";
-import LocalPizzaIcon from "@mui/icons-material/LocalPizza";
 import config from "../../../../config";
+
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import LocalPizzaOutlinedIcon from "@mui/icons-material/LocalPizzaOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
 const cx = classNames.bind(styles);
 
@@ -16,7 +21,7 @@ interface typeProps {
 interface typeNavList {
     to: string;
     title: string;
-    icon: React.ReactElement<any>;
+    icon: any;
 }
 
 function Sidebar({ className }: typeProps) {
@@ -24,12 +29,32 @@ function Sidebar({ className }: typeProps) {
         {
             to: config.routes.home,
             title: "Dashboard",
-            icon: <HomeIcon />,
+            icon: HomeOutlinedIcon,
         },
         {
             to: config.routes.product,
             title: "Product",
-            icon: <LocalPizzaIcon />,
+            icon: LocalPizzaOutlinedIcon,
+        },
+        {
+            to: config.routes.category,
+            title: "Category",
+            icon: CategoryOutlinedIcon,
+        },
+        {
+            to: config.routes.order,
+            title: "Order",
+            icon: ShoppingCartOutlinedIcon,
+        },
+        {
+            to: config.routes.booking,
+            title: "Booking",
+            icon: BookmarkAddedOutlinedIcon,
+        },
+        {
+            to: config.routes.user,
+            title: "Account",
+            icon: PersonOutlineOutlinedIcon,
         },
     ];
 
@@ -58,7 +83,7 @@ function Sidebar({ className }: typeProps) {
                             )
                         }
                     >
-                        <HomeIcon className={cx("nav-icon")} />
+                        <item.icon className={cx("nav-icon")} />
                         <p className={cx("nav-title")}>{item.title}</p>
                     </NavLink>
                 ))}

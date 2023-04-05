@@ -1,87 +1,93 @@
-import styles from "./Product.module.scss";
+import styles from "./Category.module.scss";
 import classNames from "classnames/bind";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setProductDetail } from "../../redux/slice/productSlice";
 import {
     modalUpdate,
     modalCreate,
     reloadFunc,
     openModal,
 } from "../../redux/slice/globalSlice";
-import ProductModal from "../../components/Modals/ProductModal/ProductModal";
+import CategoryModal from "../../components/Modals/CategoryModal/CategoryModal";
 import { ActionButton } from "../../components/Buttons/index";
-import * as productService from "../../services/productService";
+import * as categoryService from "../../services/categoryService";
 import { selectReload, selectCurrentPage } from "../../redux/selector";
 import { addPageCount } from "../../redux/slice/globalSlice";
+import { setCategoryDetail } from "../../redux/slice/categorySlice";
 
 const cx = classNames.bind(styles);
 
-export interface Product<T> {
+export interface Category<T> {
     id?: number;
     name: string;
-    price: number;
-    material: string;
-    description: string;
     image: T;
-    categories: number[];
 }
+
+export const categoryInit = {
+    id: 0,
+    name: "",
+    image: null,
+};
 
 export interface AsyncFunction<T> {
     (): Promise<T>;
 }
 
-function Product() {
+function Category() {
     const dispatch = useDispatch();
-    const [products, setProducts] = useState<Product<string>[]>([]);
     const reload = useSelector(selectReload);
     const pageChange = useSelector(selectCurrentPage);
+    const [categories, setCategories] = useState<Category<string>[]>([]);
 
-    const getAllProduct = async (): Promise<void> => {
-        const allProduct = await productService.getAllProduct({
+    const getAllCategory = async (): Promise<void> => {
+        const allProduct = await categoryService.get({
             page: pageChange,
+            sortBy: "id",
+            orderBy: "DESC",
         });
-        setProducts(allProduct.data);
+        setCategories(allProduct.data);
         dispatch(addPageCount(allProduct.totalPage));
     };
 
-    const handleCreateProduct = (): void => {
+    const handleCreateCategory = (): void => {
         dispatch(modalCreate());
         dispatch(openModal());
     };
 
-    const handleUpdateProduct = (product: Product<string>): void => {
-        dispatch(setProductDetail(product));
+    const handleUpdateCategory = (category: Category<string>): void => {
+        dispatch(setCategoryDetail(category));
         dispatch(modalUpdate());
         dispatch(openModal());
     };
 
-    const handleDeleteProduct = async (id: number): Promise<void> => {
-        await productService.deleteProduct(id);
+    const handleDeleteCategory = async (id: number): Promise<void> => {
+        await categoryService.deleteCategory(id);
         dispatch(reloadFunc());
     };
 
     useEffect(() => {
-        getAllProduct();
+        getAllCategory();
     }, [reload, pageChange]);
 
     return (
         <div className={cx("row g-0", "wrapper")}>
-            <ProductModal></ProductModal>
-            <div className={cx("product")}>
+            <CategoryModal></CategoryModal>
+            <div className={cx("category")}>
                 <div
                     className={cx(
                         "d-flex justify-content-between",
-                        "product-header"
+                        "category-header"
                     )}
                 >
-                    <h2 className={cx("product-header_title")}>Tabe Product</h2>
+                    <h2 className={cx("category-header_title")}>
+                        Tabe Category
+                    </h2>
                     <button
-                        onClick={handleCreateProduct}
+                        onClick={handleCreateCategory}
                         type="button"
                         className={cx(
                             "btn btn-outline-primary",
-                            "product-header_btn"
+                            "category-header_btn"
                         )}
                     >
                         Add
@@ -92,43 +98,40 @@ function Product() {
                         <thead>
                             <tr className={cx("row g-0")}>
                                 <th className={cx("col-1")}>#</th>
-                                <th className={cx("col-3")}>Image</th>
+                                <th className={cx("col-4")}>Image</th>
                                 <th className={cx("col-3")}>Name</th>
-                                <th className={cx("col-2")}>Price</th>
-                                <th className={cx("col-3")}>Action</th>
+                                <th className={cx("col-4")}>Action</th>
                             </tr>
                         </thead>
-                        {products?.map((product, index) => (
+                        {categories?.map((category, index) => (
                             <tbody key={index}>
                                 <tr className={cx("row g-0")}>
                                     <th scope="row" className={cx("col-1")}>
                                         {index}
                                     </th>
-                                    <td className={cx("col-3")}>
+                                    <td className={cx("col-4")}>
                                         <img
                                             className={cx("image")}
-                                            src={`${process.env.REACT_APP_SERVER_URL}/images/${product.image}`}
+                                            src={`${process.env.REACT_APP_SERVER_URL}/images/${category.image}`}
                                             alt=""
                                         />
                                     </td>
                                     <td className={cx("col-3")}>
-                                        {product.name}
+                                        {category.name}
                                     </td>
-                                    <td className={cx("col-2")}>
-                                        {product.price}
-                                    </td>
-                                    <td className={cx("col-3")}>
+
+                                    <td className={cx("col-4")}>
                                         <ActionButton
                                             onClick={() =>
-                                                handleUpdateProduct(product)
+                                                handleUpdateCategory(category)
                                             }
                                             type="update"
                                         />
 
                                         <ActionButton
                                             onClick={() =>
-                                                handleDeleteProduct(
-                                                    product.id ?? 0
+                                                handleDeleteCategory(
+                                                    category.id ?? 0
                                                 )
                                             }
                                             type="delete"
@@ -144,4 +147,4 @@ function Product() {
     );
 }
 
-export default Product;
+export default Category;

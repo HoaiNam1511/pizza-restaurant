@@ -2,18 +2,27 @@ import styles from "./Modal.module.scss";
 import classNames from "classnames/bind";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { selectStatusModal } from "../../../redux/selector";
-import { closeModal } from "../../../redux/slice/productSlice";
+import {
+    selectStatusModal,
+    selectModalTitleStatus,
+} from "../../../redux/selector";
+import { closeModal } from "../../../redux/slice/globalSlice";
 
 const cx = classNames.bind(styles);
 
 interface modalPropsType {
     children?: React.ReactNode;
     className?: string;
+    headerTitle: string;
 }
-function Modal({ children, className }: modalPropsType) {
+function Modal({
+    children,
+    className,
+    headerTitle = "Create",
+}: modalPropsType) {
     const dispatch = useDispatch();
     const modalStatus = useSelector(selectStatusModal);
+    const modalTitle = useSelector(selectModalTitleStatus);
     return (
         <div
             className={cx("d-flex justify-content-center align-items-center", {
@@ -31,7 +40,9 @@ function Modal({ children, className }: modalPropsType) {
                         "modal-header"
                     )}
                 >
-                    <h3 className={cx("header-title")}>Add Product</h3>
+                    <h3
+                        className={cx("header-title")}
+                    >{`${modalTitle} ${headerTitle}`}</h3>
                     <button
                         className={cx("header_btn")}
                         onClick={() => dispatch(closeModal())}

@@ -43,12 +43,23 @@
     }
 
     .active {
+        position: relative;
         background-color: $primary-background-color;
         color: $primary-color;
 
         &:hover {
             background-color: $primary-background-color;
             color: $primary-color;
+        }
+
+        &::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            height: 20px;
+            background-color: red;
         }
     }
 

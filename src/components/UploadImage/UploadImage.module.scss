@@ -1,0 +1,40 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+
+.image-container {
+    .upload {
+    }
+
+    .upload-container {
+        border: $main-border;
+        border-radius: 6px;
+        height: 90px;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .upload-icon {
+        font-size: 2.4rem;
+        color: $text-color;
+    }
+
+    .upload-title {
+        font-size: 1.4rem;
+        color: $text-color;
+    }
+
+    .image {
+        object-fit: cover;
+        width: 100px;
+        height: 100%;
+    }
+
+    .empty-image {
+        position: relative;
+        top: 50%;
+        font-size: 5rem;
+        color: $text-color;
+        transform: translateY(-50%);
+    }
+}

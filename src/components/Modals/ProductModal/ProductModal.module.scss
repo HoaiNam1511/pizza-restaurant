@@ -1,14 +1,26 @@
 @import "../../../components/GlobalStyle/GlobalStyle.scss";
 @import "../../../scss/mixin";
 
+$main-border: 1px solid #cfcfcf;
+$main-border-radius: 4px;
+
 .wrapper-content {
     min-height: 100px;
+    width: 500px;
 
     .form {
     }
 
-    .form-item + .form-item {
-        margin-top: 10px;
+    .form-item {
+        margin-bottom: 10px;
+        flex: 1;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .form-flex {
+        margin-left: -5px;
+        margin-right: -5px;
     }
 
     .label {
@@ -16,43 +28,93 @@
         display: block;
         font-size: 1.4rem;
         font-weight: 400;
+        text-transform: capitalize;
     }
 
     .input {
-        width: 100%;
-        border-radius: 4px;
-        border: 1px solid #cfcfcf;
-        font-size: 1.6rem;
-        height: 32px;
-        outline: none;
-        padding: 0 10px;
-        color: $text-color;
-        font-weight: 400;
+        @include input-custom_1;
     }
 
     .aria {
-        min-height: 120px;
+        min-height: 100px;
         padding: 5px 10px;
+    }
+
+    //Category group
+    .category {
+        margin-top: 10px;
+    }
+
+    .category-group {
+        border-radius: $main-border-radius;
+        border: $main-border;
+        padding: 15px 0;
+    }
+
+    .category-item {
+        height: 30px;
+    }
+
+    .checkbox-1 {
+        position: relative;
+    }
+    //input
+    .order-ckb {
+        visibility: hidden;
+    }
+    //label for input
+    .order-ckb-label {
+        //Checkbox custom
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        left: 15px;
+        top: 0;
+        border: 1px solid #000;
+        //Check icon
+        &::after {
+            position: absolute;
+            content: "";
+            left: 35%;
+            top: 16%;
+            transform: translate(-50%, -50%);
+            height: 12px;
+            width: 6px;
+            border: 2px solid #000;
+            transform: rotate(45deg);
+            border-left: transparent;
+            border-top: transparent;
+            opacity: 0;
+        }
+    }
+
+    .active {
+        &::after {
+            opacity: 1;
+        }
     }
 
     //Upload
     .image-container {
-        margin-top: 10px;
     }
+
     .upload {
     }
+
     .upload-container {
-        border: 1px solid #cfcfcf;
+        border: $main-border;
         border-radius: 6px;
         height: 90px;
         &:hover {
             cursor: pointer;
         }
     }
+
     .upload-icon {
         font-size: 2.4rem;
         color: $text-color;
     }
+
     .upload-title {
         font-size: 1.4rem;
         color: $text-color;
@@ -76,5 +138,6 @@
         margin-top: 15px;
         @include primary-btn;
         width: 80px;
+        text-transform: capitalize;
     }
 }

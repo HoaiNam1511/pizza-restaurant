@@ -2,21 +2,21 @@
 @import "../../scss/mixin";
 
 .wrapper {
-    .product {
+    .category {
         min-height: calc(100vh - 150px);
         background-color: #ffffff;
         border-radius: 6px;
         margin-top: 20px;
     }
 
-    .product-header {
+    .category-header {
         padding: 10px 15px 0px;
     }
 
-    .product-header_title {
+    .category-header_title {
     }
 
-    .product-header_btn {
+    .category-header_btn {
         @include primary-btn;
     }
 
