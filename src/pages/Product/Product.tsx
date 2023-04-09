@@ -1,7 +1,12 @@
-import styles from "./Product.module.scss";
-import classNames from "classnames/bind";
 import { useEffect, useState } from "react";
+import classNames from "classnames/bind";
 import { useDispatch, useSelector } from "react-redux";
+
+import styles from "./Product.module.scss";
+import ArrowSort from "../../components/ArrowSort/ArrowSort";
+import * as productService from "../../services/productService";
+import ProductModal from "../../components/Modals/ProductModal/ProductModal";
+
 import { setProductDetail } from "../../redux/slice/productSlice";
 import {
     modalUpdate,
@@ -9,11 +14,11 @@ import {
     reloadFunc,
     openModal,
 } from "../../redux/slice/globalSlice";
-import ProductModal from "../../components/Modals/ProductModal/ProductModal";
 import { ActionButton } from "../../components/Buttons/index";
-import * as productService from "../../services/productService";
 import { selectReload, selectCurrentPage } from "../../redux/selector";
 import { addPageCount } from "../../redux/slice/globalSlice";
+import { Sort } from "../../types";
+import { columnTable } from "../../data/index";
 
 const cx = classNames.bind(styles);
 
@@ -37,32 +42,45 @@ function Product() {
     const reload = useSelector(selectReload);
     const pageChange = useSelector(selectCurrentPage);
 
-    const getAllProduct = async (): Promise<void> => {
+    const getAllProduct = async ({
+        sortBy = "id",
+        orderBy = "DESC",
+    }: Sort): Promise<void> => {
         const allProduct = await productService.getAllProduct({
             page: pageChange,
+            sortBy,
+            orderBy,
         });
         setProducts(allProduct.data);
         dispatch(addPageCount(allProduct.totalPage));
     };
 
+    //Handle create
     const handleCreateProduct = (): void => {
         dispatch(modalCreate());
         dispatch(openModal());
     };
 
+    //Handle update
     const handleUpdateProduct = (product: Product<string>): void => {
         dispatch(setProductDetail(product));
         dispatch(modalUpdate());
         dispatch(openModal());
     };
 
+    //Handle update
     const handleDeleteProduct = async (id: number): Promise<void> => {
         await productService.deleteProduct(id);
         dispatch(reloadFunc());
     };
 
+    //Sort
+    const handleSort = ({ orderBy, sortBy }: Sort) => {
+        getAllProduct({ orderBy, sortBy });
+    };
+
     useEffect(() => {
-        getAllProduct();
+        getAllProduct({});
     }, [reload, pageChange]);
 
     return (
@@ -91,10 +109,30 @@ function Product() {
                     <table className={cx("table")}>
                         <thead>
                             <tr className={cx("row g-0")}>
-                                <th className={cx("col-1")}>#</th>
+                                <th className={cx("col-1")}>
+                                    #
+                                    <ArrowSort
+                                        onClick={(orderBy) =>
+                                            handleSort({
+                                                orderBy,
+                                                sortBy: columnTable.id,
+                                            })
+                                        }
+                                    />
+                                </th>
                                 <th className={cx("col-3")}>Image</th>
                                 <th className={cx("col-3")}>Name</th>
-                                <th className={cx("col-2")}>Price</th>
+                                <th className={cx("col-2")}>
+                                    Price
+                                    <ArrowSort
+                                        onClick={(orderBy) =>
+                                            handleSort({
+                                                orderBy,
+                                                sortBy: columnTable.price,
+                                            })
+                                        }
+                                    />
+                                </th>
                                 <th className={cx("col-3")}>Action</th>
                             </tr>
                         </thead>

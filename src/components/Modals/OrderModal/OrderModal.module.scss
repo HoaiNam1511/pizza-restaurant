@@ -1,0 +1,85 @@
+$background: #ffffff;
+$text-color: #566a7f;
+
+.wrapper-content {
+    min-height: 100px;
+    width: 1000px;
+
+    .left-1 {
+        border-radius: 4px;
+        max-height: 240px;
+        overflow-y: scroll;
+    }
+
+    .left-2 {
+        margin-top: 20px;
+    }
+
+    .left-1,
+    .left-2,
+    .right-1 {
+        background: $background;
+    }
+
+    .table {
+    }
+
+    tr {
+        padding: 0 20px;
+    }
+
+    td:nth-child(1),
+    th:nth-child(1) {
+        justify-content: start;
+    }
+
+    td:nth-last-child(1) {
+        justify-content: end;
+    }
+
+    //Right container
+
+    .right {
+        padding-left: 10px;
+    }
+
+    .right-1,
+    .right-2 {
+        border-radius: 4px;
+        border: 1px solid #e3e3e3;
+        padding: 10px 20px;
+    }
+
+    .right-2 {
+        margin-top: 20px;
+    }
+
+    .title-header {
+        margin-bottom: 20px;
+    }
+
+    .item {
+        margin-bottom: 10px;
+    }
+    .item-title {
+        font-size: 1.6rem;
+        font-weight: 400;
+        margin: 0;
+        text-transform: capitalize;
+    }
+
+    .is-email {
+        text-transform: lowercase;
+    }
+
+    .item-title:nth-child(1) {
+        font-weight: 700;
+        color: $text-color;
+    }
+
+    .image {
+        width: 60px;
+        object-fit: cover;
+        margin-right: 20px;
+    }
+}

@@ -6,6 +6,12 @@ $main-box-shadow: 0 0.125rem 0.375rem 0 rgba(161, 172, 184, 0.12);
 $text-color: #787878;
 $main-border: 1px solid #cfcfcf;
 
+$color-status-1: #aba4a0;
+$color-status-2: #f3a638;
+$color-status-3: #54b7d3;
+$color-status-4: #4cb64c;
+$color-status-5: #e3503e;
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -37,30 +43,6 @@ body {
     line-height: 1.5;
     overflow-y: overlay;
 }
-
-// table {
-//     --accent-color: #362f4b;
-//     --text-color: slategray;
-//     --bgColorDarker: #ececec;
-//     --bgColorLighter: #fcfcfc;
-//     --insideBorderColor: lightgray;
-//     width: 100%;
-//     margin: 0;
-//     padding: 0;
-//     border: 1px solid var(--accent-color);
-//     border-collapse: collapse;
-//     color: var(--text-color);
-//     table-layout: fixed;
-// }
-
-// table caption {
-//     margin: 1rem 0;
-//     color: slategray;
-//     font-size: 1.5rem;
-//     font-weight: 600;
-//     letter-spacing: 0.055rem;
-//     text-align: center;
-// }
 
 table thead tr {
     // background-color: $primary-color;

@@ -1,0 +1,15 @@
+@import "../../scss/mixin";
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+
+$main-border-radius: 4px;
+.label {
+    text-align: start;
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 400;
+    text-transform: capitalize;
+}
+
+.input {
+    @include input-custom_1;
+}

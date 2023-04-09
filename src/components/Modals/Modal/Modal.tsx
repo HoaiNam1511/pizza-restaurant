@@ -1,12 +1,14 @@
-import styles from "./Modal.module.scss";
 import classNames from "classnames/bind";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
+
+import styles from "./Modal.module.scss";
+
+import { closeModal } from "../../../redux/slice/globalSlice";
 import {
     selectStatusModal,
     selectModalTitleStatus,
 } from "../../../redux/selector";
-import { closeModal } from "../../../redux/slice/globalSlice";
 
 const cx = classNames.bind(styles);
 

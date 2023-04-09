@@ -1,7 +1,12 @@
-import styles from "./CategoryModal.module.scss";
-import classNames from "classnames/bind";
-import Modal from "../Modal/Modal";
 import { useEffect, useState } from "react";
+import classNames from "classnames/bind";
+
+import * as categoryService from "../../../services/categoryService";
+import styles from "./CategoryModal.module.scss";
+import Modal from "../Modal/Modal";
+import UploadImage from "../../UploadImage/UploadImage";
+import InputForm from "../../InputForm/InputForm";
+
 import { Category } from "../../../pages/Category/Category";
 import {
     selectModalTitleStatus,
@@ -10,8 +15,6 @@ import {
 import { reloadFunc } from "../../../redux/slice/globalSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { categoryInit } from "../../../pages/Category/Category";
-import UploadImage from "../../UploadImage/UploadImage";
-import * as categoryService from "../../../services/categoryService";
 
 const cx = classNames.bind(styles);
 
@@ -22,27 +25,29 @@ function CategoryModal() {
     const dispatch = useDispatch();
     const [category, setCategory] =
         useState<Category<File | null>>(categoryInit);
+    const { id, name, image } = category;
 
     const categoryDetail = useSelector(selectCategoryDetail);
     const modalTitle = useSelector(selectModalTitleStatus);
-
-    const { id, name, image } = category;
 
     const handleUploadFile = (event: any): void => {
         setCategory({ ...category, image: event.target.files?.[0] });
     };
 
+    //Handle input change
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ): void => {
         setCategory({ ...category, [event.target.name]: event.target.value });
     };
 
+    //Add data to formData
     const addFormData = (): void => {
         formData.append("name", name);
         formData.append("image", image);
     };
 
+    //Api
     const create = async (): Promise<void> => {
         try {
             addFormData();
@@ -64,6 +69,7 @@ function CategoryModal() {
         }
     };
 
+    //Handle when button create/update click
     const handleCreateCategory = (): void => {
         if (modalTitle === process.env.REACT_APP_CREATE_VALUE) {
             create();
@@ -72,6 +78,7 @@ function CategoryModal() {
         }
     };
 
+    //Set category detail
     useEffect(() => {
         if (categoryDetail?.id) {
             setCategory({
@@ -92,15 +99,12 @@ function CategoryModal() {
             >
                 <form className={cx("form")} action="">
                     <div className={cx("form-item")}>
-                        <label className={cx("label")} htmlFor="">
-                            Name
-                        </label>
-                        <input
+                        <InputForm
+                            label="Name"
                             name="name"
-                            className={cx("input")}
-                            type="text"
-                            placeholder="Name"
                             onChange={(e) => handleInputChange(e)}
+                            placeholder="Email"
+                            type="text"
                             value={name || ""}
                         />
                     </div>

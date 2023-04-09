@@ -1,3 +1,5 @@
+@import "../../../components/GlobalStyle/GlobalStyle.scss";
+
 .action-button_wrapper {
     height: 35px;
     width: 35px;
@@ -15,8 +17,13 @@
         color: #fc3b3b;
     }
 
+    .icon-detail {
+        color: #2af270;
+    }
+
     .icon-update,
-    .icon-delete {
+    .icon-delete,
+    .icon-detail {
         font-size: 2rem;
     }
 }
@@ -31,4 +38,8 @@
 
 .delete {
     background-color: #ffcbcb;
+}
+
+.detail {
+    background-color: #d5ffcb;
 }

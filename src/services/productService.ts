@@ -1,11 +1,6 @@
 import { httpRequestProduct } from "../util/httpRequest";
 import { Product } from "../pages/Product/Product";
-
-interface ProductParams {
-    page?: number;
-    sortBy?: string;
-    orderBy?: string;
-}
+import { Params } from "./index";
 
 export const createProduct = async (product: Product<File | null>) => {
     const res = await httpRequestProduct.post("/create", product);
@@ -16,9 +11,10 @@ export const getAllProduct = async ({
     page,
     sortBy = "id",
     orderBy = "DESC",
-}: ProductParams) => {
-    console.log(page);
-    const res = await httpRequestProduct.get(`/get?page=${page}`);
+}: Params) => {
+    const res = await httpRequestProduct.get(
+        `/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`
+    );
     return res.data;
 };
 

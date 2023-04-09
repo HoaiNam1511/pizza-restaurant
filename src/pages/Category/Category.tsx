@@ -1,16 +1,18 @@
-import styles from "./Category.module.scss";
-import classNames from "classnames/bind";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import classNames from "classnames/bind";
+
+import styles from "./Category.module.scss";
+import CategoryModal from "../../components/Modals/CategoryModal/CategoryModal";
+import * as categoryService from "../../services/categoryService";
+
 import {
     modalUpdate,
     modalCreate,
     reloadFunc,
     openModal,
 } from "../../redux/slice/globalSlice";
-import CategoryModal from "../../components/Modals/CategoryModal/CategoryModal";
 import { ActionButton } from "../../components/Buttons/index";
-import * as categoryService from "../../services/categoryService";
 import { selectReload, selectCurrentPage } from "../../redux/selector";
 import { addPageCount } from "../../redux/slice/globalSlice";
 import { setCategoryDetail } from "../../redux/slice/categorySlice";
@@ -39,6 +41,7 @@ function Category() {
     const pageChange = useSelector(selectCurrentPage);
     const [categories, setCategories] = useState<Category<string>[]>([]);
 
+    //Api
     const getAllCategory = async (): Promise<void> => {
         const allProduct = await categoryService.get({
             page: pageChange,
@@ -49,17 +52,20 @@ function Category() {
         dispatch(addPageCount(allProduct.totalPage));
     };
 
+    //Handle create
     const handleCreateCategory = (): void => {
         dispatch(modalCreate());
         dispatch(openModal());
     };
 
+    //Handle update
     const handleUpdateCategory = (category: Category<string>): void => {
         dispatch(setCategoryDetail(category));
         dispatch(modalUpdate());
         dispatch(openModal());
     };
 
+    //Handle delete
     const handleDeleteCategory = async (id: number): Promise<void> => {
         await categoryService.deleteCategory(id);
         dispatch(reloadFunc());

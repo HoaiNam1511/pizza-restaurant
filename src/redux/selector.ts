@@ -15,6 +15,11 @@ export const selectPageCount = (state: RootState) =>
 export const selectCurrentPage = (state: RootState) => state.globalReducer.page;
 
 //Select category
-
 export const selectCategoryDetail = (state: RootState) =>
     state.categoryReducer.categoryDetail;
+//Select order
+export const selectOrderDetail = (state: RootState) =>
+    state.orderReducer.orderDetail;
+//Select booking
+export const selectBookingDetail = (state: RootState) =>
+    state.bookingReducer.categoryDetail;

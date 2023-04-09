@@ -1,0 +1,13 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+//Arrow
+.sort {
+    margin-left: 10px;
+}
+.arrow-up {
+    @include arrow-up;
+}
+
+.arrow-down {
+    @include arrow-down;
+}

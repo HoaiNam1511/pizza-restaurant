@@ -1,9 +1,12 @@
-import styles from "./ProductModal.module.scss";
-import classNames from "classnames/bind";
-import Modal from "../Modal/Modal";
 import { useEffect, useState } from "react";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import ImageSearchIcon from "@mui/icons-material/ImageSearch";
+import classNames from "classnames/bind";
+
+import * as categoryService from "../../../services/categoryService";
+import styles from "./ProductModal.module.scss";
+import Modal from "../Modal/Modal";
+import UploadImage from "../../UploadImage/UploadImage";
+import InputForm from "../../InputForm/InputForm";
+
 import { Product } from "../../../pages/Product/Product";
 import { createProduct, updateProduct } from "../../../services/productService";
 import { Category } from "../../../pages/Category/Category";
@@ -12,9 +15,7 @@ import {
     selectModalTitleStatus,
 } from "../../../redux/selector";
 import { reloadFunc } from "../../../redux/slice/globalSlice";
-import * as categoryService from "../../../services/categoryService";
 import { useSelector, useDispatch } from "react-redux";
-import UploadImage from "../../UploadImage/UploadImage";
 
 const cx = classNames.bind(styles);
 
@@ -41,10 +42,12 @@ function CategoryModal() {
     const { id, name, price, material, description, image, categories } =
         product;
 
+    //Handle image upload
     const handleUploadFile = (event: any): void => {
         setProduct({ ...product, image: event.target.files?.[0] });
     };
 
+    //Handle when input change
     const handleProductChange = (
         event:
             | React.ChangeEvent<HTMLInputElement>
@@ -53,6 +56,7 @@ function CategoryModal() {
         setProduct({ ...product, [event.target.name]: event.target.value });
     };
 
+    //Add to formData
     const addProductFormData = (): void => {
         productData.append("name", name);
         productData.append("price", price);
@@ -62,6 +66,7 @@ function CategoryModal() {
         productData.append("categories", JSON.stringify(categories));
     };
 
+    //Api
     const create = async (): Promise<void> => {
         try {
             addProductFormData();
@@ -83,16 +88,17 @@ function CategoryModal() {
         }
     };
 
+    //Get category
     const getCategory: AsyncFunction<void> = async (): Promise<void> => {
         try {
             const res = await categoryService.getAll();
-            console.log(res);
             setCategorys(res.data);
         } catch (err) {
             console.log(err);
         }
     };
 
+    //Handle group category of product
     const handleCheckboxClick = (
         event: React.ChangeEvent<HTMLInputElement>
     ): void => {
@@ -111,6 +117,7 @@ function CategoryModal() {
         }
     };
 
+    //Handle when button create/update click
     const handleCreateProduct = (): void => {
         if (modalTitle === process.env.REACT_APP_CREATE_VALUE) {
             create();
@@ -123,6 +130,7 @@ function CategoryModal() {
         getCategory();
     }, []);
 
+    //Set product detail
     useEffect(() => {
         if (productDetail?.id) {
             setProduct({
@@ -137,8 +145,6 @@ function CategoryModal() {
         }
     }, [productDetail]);
 
-    console.log(categorys);
-
     return (
         <Modal headerTitle="Product">
             <div
@@ -150,26 +156,20 @@ function CategoryModal() {
                 <form className={cx("form")} action="">
                     <div className={cx("d-flex", "form-flex")}>
                         <div className={cx("form-item")}>
-                            <label className={cx("label")} htmlFor="">
-                                Name
-                            </label>
-                            <input
+                            <InputForm
+                                label="Name"
                                 name="name"
-                                className={cx("input")}
-                                type="text"
-                                placeholder="Name"
                                 onChange={(e) => handleProductChange(e)}
+                                placeholder="Name"
+                                type="text"
                                 value={name || ""}
                             />
                         </div>
 
                         <div className={cx("form-item")}>
-                            <label className={cx("label")} htmlFor="">
-                                Price
-                            </label>
-                            <input
+                            <InputForm
+                                label="Price"
                                 name="price"
-                                className={cx("input")}
                                 type="text"
                                 placeholder="Price"
                                 onChange={(e) => handleProductChange(e)}

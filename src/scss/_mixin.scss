@@ -39,3 +39,26 @@
         border: 1px solid $primary-color;
     }
 }
+
+$arrow-color: #3d3d3d;
+
+@mixin arrow {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    margin: 2px 0px;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+@mixin arrow-up {
+    @include arrow;
+    border-bottom: 7px solid $arrow-color;
+}
+
+@mixin arrow-down {
+    @include arrow;
+    border-top: 7px solid $arrow-color;
+}
