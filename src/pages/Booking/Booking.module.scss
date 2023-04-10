@@ -20,6 +20,11 @@
         @include primary-btn;
     }
 
+    .booking-header_btn--outline {
+        @include primary-btn_outline;
+        margin-left: 10px;
+    }
+
     //Table
     .table-container {
         margin-top: 30px;

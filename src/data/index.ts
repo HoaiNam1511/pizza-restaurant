@@ -8,6 +8,8 @@ interface ColumnTabeOrder {
     total: string;
     id: string;
     price: string;
+    bookingDate: any;
+    bookingTime: any;
 }
 
 export interface PartySizeData {
@@ -35,6 +37,8 @@ export const columnTable: ColumnTabeOrder = {
     total: "total",
     id: "id",
     price: "price",
+    bookingDate: "booking_date",
+    bookingTime: "booking_time",
 };
 
 export const bookingStatusData: OrderStatus[] = [
@@ -51,6 +55,4 @@ export const partySizeData: PartySizeData[] = [
     { title: "4 people", value: 4, quantity: 0 },
     { title: "6 people", value: 6, quantity: 0 },
     { title: "8 people", value: 8, quantity: 0 },
-    { title: "10 people", value: 10, quantity: 0 },
-    { title: "12 people", value: 12, quantity: 0 },
 ];

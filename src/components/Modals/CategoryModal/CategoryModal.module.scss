@@ -1,6 +1,5 @@
 @import "../../../components/GlobalStyle/GlobalStyle.scss";
 @import "../../../scss/mixin";
-$main-border-radius: 4px;
 
 .wrapper-content {
     min-height: 100px;
@@ -28,7 +27,7 @@ $main-border-radius: 4px;
 
     .btn-add {
         margin-top: 15px;
-        @include primary-btn;
+        @include primary-btn_outline;
         width: 80px;
         text-transform: capitalize;
     }

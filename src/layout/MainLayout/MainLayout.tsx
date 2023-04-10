@@ -32,15 +32,17 @@ function MainLayout({ children }: ChildrenProps) {
                             "col-12 d-flex flex-column align-items-center"
                         )}
                     >
-                        <Navbar className={cx("right-content_nav")}></Navbar>
+                        <Navbar className={cx("right-content_nav")} />
                         <div className={cx("col-12", "right-content_child")}>
                             {children}
                         </div>
                     </div>
-                    <Paginate
-                        pageCount={pageCount}
-                        onClick={(page) => dispatch(addPage(page))}
-                    />
+                    {pageCount !== 0 && (
+                        <Paginate
+                            pageCount={pageCount}
+                            onClick={(page) => dispatch(addPage(page))}
+                        />
+                    )}
                 </div>
             </div>
         </div>

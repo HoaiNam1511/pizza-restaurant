@@ -1,3 +1,5 @@
+$main-border-radius: 4px;
+
 @mixin overlay {
     position: fixed;
     height: 100%;
@@ -10,6 +12,19 @@
 }
 
 @mixin primary-btn {
+    min-width: 80px;
+    font-size: 1.6rem;
+    color: #ffffff;
+    background-color: $primary-color;
+    height: 32px;
+    &:hover {
+        border: 1px solid $primary-color;
+        background-color: transparent;
+        color: $primary-color;
+    }
+}
+
+@mixin primary-btn_outline {
     min-width: 80px;
     font-size: 1.6rem;
     color: $primary-color;

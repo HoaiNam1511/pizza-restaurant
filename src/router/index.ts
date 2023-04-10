@@ -6,6 +6,7 @@ import Category from "../pages/Category/Category";
 import Order from "../pages/Order/Order";
 import Booking from "../pages/Booking/Booking";
 import User from "../pages/User/User";
+import Table from "../pages/Table/Table";
 
 const routers = [
     {
@@ -36,6 +37,11 @@ const routers = [
     {
         path: config.routes.user,
         page: User,
+        layout: MainLayout,
+    },
+    {
+        path: config.routes.table,
+        page: Table,
         layout: MainLayout,
     },
 ];

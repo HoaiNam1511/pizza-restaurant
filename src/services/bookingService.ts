@@ -13,12 +13,19 @@ export const get = async ({
     sortBy = "id",
     orderBy = "DESC",
 }: ProductParams) => {
-    const res = await httpRequestBooking.get(`/get?page=${page}`);
+    const res = await httpRequestBooking.get(
+        `/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`
+    );
     return res.data;
 };
 
-export const getTable = async () => {
-    const res = await httpRequestTable.get(`/get`);
+export const getTable = async ({ used }: { used?: boolean }) => {
+    const res = await httpRequestTable.get(`/get?used=${used}`);
+    return res.data;
+};
+
+export const getAllTable = async () => {
+    const res = await httpRequestTable.get(`/get?`);
     return res.data;
 };
 

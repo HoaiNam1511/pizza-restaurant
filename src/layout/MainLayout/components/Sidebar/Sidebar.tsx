@@ -11,6 +11,7 @@ import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import TableBarOutlinedIcon from "@mui/icons-material/TableBarOutlined";
 
 const cx = classNames.bind(styles);
 
@@ -50,6 +51,11 @@ function Sidebar({ className }: typeProps) {
             to: config.routes.booking,
             title: "Booking",
             icon: BookmarkAddedOutlinedIcon,
+        },
+        {
+            to: config.routes.table,
+            title: "Table",
+            icon: TableBarOutlinedIcon,
         },
         {
             to: config.routes.user,

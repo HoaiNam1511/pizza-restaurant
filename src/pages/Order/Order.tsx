@@ -169,17 +169,7 @@ function Order() {
                                         }
                                     />
                                 </th>
-                                <th className={cx("col-1")}>
-                                    Quantity
-                                    <ArrowSort
-                                        onClick={(orderBy) =>
-                                            handleSort({
-                                                orderBy,
-                                                sortBy: columnTable.quantity,
-                                            })
-                                        }
-                                    />
-                                </th>
+                                <th className={cx("col-1")}>Quantity</th>
                                 <th className={cx("col-1")}>Total</th>
                                 <th className={cx("col-2")}>Customer</th>
                                 <th className={cx("col-2")}>Status</th>

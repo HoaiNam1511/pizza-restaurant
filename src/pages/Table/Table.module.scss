@@ -1,0 +1,49 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+
+.wrapper {
+    .table {
+        min-height: calc(100vh - 150px);
+        background-color: #ffffff;
+        border-radius: 6px;
+        margin-top: 20px;
+    }
+
+    .table-header {
+        padding: 10px 15px 0px;
+    }
+
+    .table-header_title {
+    }
+
+    .table-header_btn {
+        @include primary-btn_outline;
+    }
+
+    //Select
+    .select {
+        @include input-custom_1;
+        width: 125px;
+    }
+
+    .item {
+        margin-top: 20px;
+    }
+
+    img {
+        width: 70%;
+    }
+
+    h3,
+    h4 {
+        color: $text-color;
+    }
+
+    .used {
+        color: #fd1a1a;
+    }
+
+    .available {
+        color: #36f410;
+    }
+}

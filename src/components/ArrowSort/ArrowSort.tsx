@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./ArrowSort.module.scss";
 
 interface Sort {
-    onClick: (sortBy: string) => void;
+    onClick: (orderBy: string) => void;
 }
 
 const cx = classNames.bind(styles);

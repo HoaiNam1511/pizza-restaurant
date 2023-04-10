@@ -5,6 +5,7 @@ const routes = {
     user: "/user",
     login: "/login",
     booking: "/booking",
+    table: "/table",
     home: "/",
 };
 export default routes;

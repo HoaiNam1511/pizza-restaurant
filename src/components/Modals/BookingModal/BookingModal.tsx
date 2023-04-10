@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames/bind";
 
@@ -15,6 +15,7 @@ import {
     selectBookingDetail,
 } from "../../../redux/selector";
 import { Booking } from "../../../pages/Booking/Booking";
+import { Table } from "../../../pages/Table/Table";
 import { partySizeData, PartySizeData } from "../../../data/index";
 
 const bookingInit = {
@@ -29,15 +30,9 @@ const bookingInit = {
     tableId: 0,
 };
 
-export interface Table {
-    id: number;
-    table_title: string;
-    table_size: string;
-    table_used: string;
-}
-
 const cx = classNames.bind(styles);
 function BookingModal() {
+    const refSelect = useRef<any>(null);
     const dispatch = useDispatch();
     const [booking, setBooking] = useState<Booking>(bookingInit);
     const [tables, setTable] = useState<Table[]>([]);
@@ -66,15 +61,6 @@ function BookingModal() {
         setBooking({ ...booking, [event.target.name]: event.target.value });
     };
 
-    const getTable = async () => {
-        try {
-            const response = await bookingService.getTable();
-            setTable(response);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
     //Create booking
     const create = async (): Promise<void> => {
         try {
@@ -92,6 +78,20 @@ function BookingModal() {
             await bookingService.update(booking, bookingDetail.id);
             dispatch(reloadFunc());
             getTable();
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const getTable = async () => {
+        try {
+            const response = await bookingService.getTable({ used: false });
+            setTable(response);
+            setBooking({
+                ...booking,
+                partySize: response[0].table_size,
+                tableId: response[0].id,
+            });
         } catch (err) {
             console.log(err);
         }
@@ -133,16 +133,22 @@ function BookingModal() {
     const handlePartySizeChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
-        const filterTable: Table[] = tables.filter(
-            (table) => table.table_size >= event.target.value
-        );
+        const selectedOption = event.target.selectedOptions[0];
+        const quantity = Number(selectedOption.dataset.quantity);
 
-        setTableFilter(filterTable);
-        setBooking({
-            ...booking,
-            [event.target.name]: event.target.value,
-            tableId: filterTable[0].id,
-        });
+        if (quantity) {
+            const filterTable: Table[] = tables.filter(
+                (table) => table.table_size >= event.target.value
+            );
+            setTableFilter(filterTable);
+            setBooking({
+                ...booking,
+                [event.target.name]: event.target.value,
+                tableId: filterTable[0].id,
+            });
+        } else {
+            alert(`Table for party size is full`);
+        }
     };
 
     useEffect(() => {
@@ -261,7 +267,12 @@ function BookingModal() {
                                 value={partySize}
                             >
                                 {quantityTable.map((item, index) => (
-                                    <option value={item.value} key={index}>
+                                    <option
+                                        ref={refSelect}
+                                        value={item.value}
+                                        key={index}
+                                        data-quantity={item.quantity}
+                                    >
                                         {`${item.title} - ${item.quantity} table`}
                                     </option>
                                 ))}
