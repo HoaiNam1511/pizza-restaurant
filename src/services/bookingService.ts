@@ -1,40 +1,47 @@
-import { Category } from "./../pages/Category/Category";
-import { httpRequestBooking, httpRequestTable } from "../util/httpRequest";
-import { Booking } from "../pages/Booking/Booking";
-
-interface ProductParams {
-    page?: number;
-    sortBy?: string;
-    orderBy?: string;
-}
+import { httpRequestBooking } from "../util/httpRequest";
+import * as globalInterface from "../types";
 
 export const get = async ({
     page = 1,
-    sortBy = "id",
-    orderBy = "DESC",
-}: ProductParams) => {
-    const res = await httpRequestBooking.get(
-        `/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`
+    sortBy,
+    orderBy,
+    headers,
+    axiosJWT,
+}: globalInterface.ServiceParams) => {
+    const res = await axiosJWT.get(
+        `/booking/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`,
+        { headers }
     );
     return res.data;
 };
 
-export const getTable = async ({ used }: { used?: boolean }) => {
-    const res = await httpRequestTable.get(`/get?used=${used}`);
+export const getTable = async (
+    { headers, axiosJWT }: globalInterface.ServiceParams,
+    { used }: { used?: boolean }
+) => {
+    const res = await axiosJWT.get(`table/get?used=${used}`, { headers });
     return res.data;
 };
 
-export const getAllTable = async () => {
-    const res = await httpRequestTable.get(`/get?`);
+export const getAllTable = async ({
+    headers,
+    axiosJWT,
+}: globalInterface.ServiceParams) => {
+    const res = await axiosJWT.get("/table/get", { headers });
     return res.data;
 };
 
-export const create = async (booking: Booking) => {
+export const create = async (booking: globalInterface.Booking) => {
     const res = await httpRequestBooking.post("/create", booking);
     return res.data;
 };
 
-export const update = async (booking: Booking, id: number) => {
-    const res = await httpRequestBooking.put(`/update/${id}`, booking);
+export const update = async (
+    { headers, axiosJWT }: globalInterface.ServiceParams,
+    { booking, id }: { booking: globalInterface.Booking; id: number }
+) => {
+    const res = await axiosJWT.put(`/booking/update/${id}`, booking, {
+        headers,
+    });
     return res.data;
 };

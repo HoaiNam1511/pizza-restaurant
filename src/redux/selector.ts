@@ -23,3 +23,11 @@ export const selectOrderDetail = (state: RootState) =>
 //Select booking
 export const selectBookingDetail = (state: RootState) =>
     state.bookingReducer.categoryDetail;
+//Select auth
+export const selectCurrentAccount = (state: RootState) =>
+    state.authReducer.login.currentAccount;
+export const selectInfoAccountReset = (state: RootState) =>
+    state.authReducer.infoAccountReset;
+//Select account
+export const selectAccoutDetail = (state: RootState) =>
+    state.accountReducer.accountDetail;

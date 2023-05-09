@@ -1,10 +1,11 @@
-import Modal from "../Modal/Modal";
-import styles from "./OrderModal.module.scss";
 import classNames from "classnames/bind";
 import { useSelector } from "react-redux";
-import { selectOrderDetail } from "../../../redux/selector";
+import Modal from "../Modal/Modal";
 import { useState, useEffect } from "react";
+import styles from "./OrderModal.module.scss";
+import { selectOrderDetail } from "../../../redux/selector";
 import DetailItem from "./DetailItem";
+import * as globalInterface from "../../../types";
 
 const cx = classNames.bind(styles);
 export interface Detail {
@@ -17,7 +18,7 @@ function OrderModal() {
     const [product, setProduct] = useState<any | null>([]);
     const [total, setTotal] = useState<number | null>(null);
 
-    const productDetailList: Detail[] = [
+    const productDetailList: globalInterface.TitleValueString[] = [
         { title: "Name", value: "" },
         { title: "Price", value: "" },
         { title: "Material", value: "" },

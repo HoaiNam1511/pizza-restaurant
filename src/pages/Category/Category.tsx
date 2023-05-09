@@ -4,7 +4,9 @@ import classNames from "classnames/bind";
 
 import styles from "./Category.module.scss";
 import CategoryModal from "../../components/Modals/CategoryModal/CategoryModal";
+
 import * as categoryService from "../../services/categoryService";
+import * as globalInterface from "../../types";
 
 import {
     modalUpdate,
@@ -13,17 +15,13 @@ import {
     openModal,
 } from "../../redux/slice/globalSlice";
 import { ActionButton } from "../../components/Buttons/index";
-import { selectReload, selectCurrentPage } from "../../redux/selector";
+import * as selectorState from "../../redux/selector";
 import { addPageCount } from "../../redux/slice/globalSlice";
 import { setCategoryDetail } from "../../redux/slice/categorySlice";
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
-
-export interface Category<T> {
-    id?: number;
-    name: string;
-    image: T;
-}
 
 export const categoryInit = {
     id: 0,
@@ -37,9 +35,12 @@ export interface AsyncFunction<T> {
 
 function Category() {
     const dispatch = useDispatch();
-    const reload = useSelector(selectReload);
-    const pageChange = useSelector(selectCurrentPage);
-    const [categories, setCategories] = useState<Category<string>[]>([]);
+    const reload = useSelector(selectorState.selectReload);
+    const pageChange = useSelector(selectorState.selectCurrentPage);
+    const [categories, setCategories] = useState<
+        globalInterface.Category<string>[]
+    >([]);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
     //Api
     const getAllCategory = async (): Promise<void> => {
@@ -47,6 +48,10 @@ function Category() {
             page: pageChange,
             sortBy: "id",
             orderBy: "DESC",
+            axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
+            headers: {
+                token: currentAccount?.token,
+            },
         });
         setCategories(allProduct.data);
         dispatch(addPageCount(allProduct.totalPage));
@@ -59,7 +64,9 @@ function Category() {
     };
 
     //Handle update
-    const handleUpdateCategory = (category: Category<string>): void => {
+    const handleUpdateCategory = (
+        category: globalInterface.Category<string>
+    ): void => {
         dispatch(setCategoryDetail(category));
         dispatch(modalUpdate());
         dispatch(openModal());
@@ -67,7 +74,21 @@ function Category() {
 
     //Handle delete
     const handleDeleteCategory = async (id: number): Promise<void> => {
-        await categoryService.deleteCategory(id);
+        await categoryService.deleteCategory(
+            {
+                headers: {
+                    token: currentAccount?.token,
+                },
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+            },
+            {
+                id: id,
+            }
+        );
         dispatch(reloadFunc());
     };
 

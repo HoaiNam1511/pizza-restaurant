@@ -5,91 +5,83 @@ import classNames from "classnames/bind";
 import OrderModal from "../../components/Modals/OrderModal/OrderModal";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
 import styles from "./Order.module.scss";
-import * as orderService from "../../services/orderService";
 import SelectAction from "../../components/SelectAction/SelectAction";
+
+import * as orderService from "../../services/orderService";
+import * as globalInterface from "../../types";
+import * as selectorState from "../../redux/selector";
 
 import { orderStatusData, paymentStatusData, columnTable } from "../../data";
 import { ActionButton } from "../../components/Buttons";
-import { selectCurrentPage } from "../../redux/selector";
 import { setOrderDetail } from "../../redux/slice/orderSlice";
 import { openModal, addPageCount } from "../../redux/slice/globalSlice";
-import { Sort } from "../../types";
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
 const cx = classNames.bind(styles);
-export interface Order {
-    id: number;
-    order_code: string;
-    customer_id: number;
-    order_date: string;
-    order_status: string;
-    payment_method: string;
-    payment_status: string;
-    customer: {
-        id: number;
-        name: string;
-        email: string;
-        address: string;
-        phone_number: number;
-    };
-    products: {
-        id: number;
-        name: string;
-        price: number;
-        material: string;
-        description: string;
-        image: string;
-        order_details: {
-            id: number;
-            order_id: number;
-            product_id: number;
-            quantity: number;
-        };
-    }[];
-}
-
-export interface OrderStatus {
-    id: number | null;
-    paymentMethod: string;
-    orderStatus: string;
-    paymentStatus: string;
-}
 
 const selectName = {
     orderStatus: "orderStatus",
     paymentStatus: "paymentStatus",
 };
 
+export interface OrderUpdate {
+    id: number | null;
+    order: globalInterface.OrderStatus;
+}
 function Order() {
     const dispatch = useDispatch();
-    const pageChange = useSelector(selectCurrentPage);
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [orderStatus, setOrderStatus] = useState<OrderStatus>({
-        id: null,
-        paymentMethod: "",
-        orderStatus: "",
-        paymentStatus: "",
-    });
+    const pageChange = useSelector(selectorState.selectCurrentPage);
+    const [orders, setOrders] = useState<globalInterface.Order[]>([]);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const [orderStatus, setOrderStatus] = useState<globalInterface.OrderStatus>(
+        {
+            id: null,
+            paymentMethod: "",
+            orderStatus: "",
+            paymentStatus: "",
+        }
+    );
 
     //Api
-    const getOrder = async ({ orderBy = "DESC", sortBy = "id" }: Sort) => {
+    const getOrder = async ({
+        orderBy = "DESC",
+        sortBy = "id",
+    }: globalInterface.Sort) => {
         const response = await orderService.getAll({
             page: pageChange,
             sortBy,
             orderBy,
+            headers: {
+                token: currentAccount?.token,
+            },
+            axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
         });
         setOrders(response.data);
         dispatch(addPageCount(response.totalPage));
     };
 
     const updateOrderStatus = async () => {
-        await orderService.updateOrder({
-            id: orderStatus.id,
-            order: orderStatus,
-        });
+        await orderService.updateOrder(
+            {
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+                headers: {
+                    token: currentAccount?.token,
+                },
+            },
+            {
+                id: orderStatus.id,
+                order: orderStatus,
+            }
+        );
         getOrder({});
     };
 
     //Show detail order
-    const handleDetailOrder = (order: Order) => {
+    const handleDetailOrder = (order: globalInterface.Order) => {
         dispatch(setOrderDetail(order));
         dispatch(openModal());
     };
@@ -98,7 +90,7 @@ function Order() {
     const handleSelectChange = (
         event: React.ChangeEvent<HTMLSelectElement>,
         paymentMethod: string,
-        orderItem: Order
+        orderItem: globalInterface.Order
     ): void => {
         setOrderStatus({
             ...orderStatus,
@@ -126,7 +118,7 @@ function Order() {
     };
 
     //Handle sort
-    const handleSort = ({ orderBy, sortBy }: Sort) => {
+    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort) => {
         getOrder({ orderBy, sortBy });
     };
 

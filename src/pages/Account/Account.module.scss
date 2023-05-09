@@ -1,0 +1,36 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+
+.wrapper {
+    .content {
+        min-height: calc(100vh - 150px);
+        background-color: #ffffff;
+        border-radius: 6px;
+        margin-top: 20px;
+
+        .header {
+            padding: 10px 15px 0px;
+        }
+
+        .header_title {
+        }
+        .booking-header_btn {
+            @include primary-btn;
+        }
+
+        .header_btn--outline {
+            @include primary-btn_outline;
+            margin-left: 10px;
+        }
+
+        //Table
+        .table-container {
+            margin-top: 30px;
+        }
+
+        .image {
+            width: 60px;
+            object-fit: cover;
+        }
+    }
+}

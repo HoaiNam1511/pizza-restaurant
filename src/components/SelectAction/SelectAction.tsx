@@ -2,7 +2,7 @@ import styles from "./SelectAction.module.scss";
 import classNames from "classnames/bind";
 
 const cx = classNames.bind(styles);
-interface SelectAction {
+interface SelectActionProps {
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     type: string;
     data: { title: string; value: string }[];
@@ -15,7 +15,7 @@ function SelectAction({
     data,
     name,
     currentStatus,
-}: SelectAction) {
+}: SelectActionProps) {
     return (
         <select
             name={name}

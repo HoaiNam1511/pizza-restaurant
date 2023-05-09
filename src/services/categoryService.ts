@@ -1,14 +1,10 @@
-import { Category } from "./../pages/Category/Category";
-import { httpRequestCategory } from "../util/httpRequest";
+import * as globalInterface from "../types";
 
-interface ProductParams {
-    page?: number;
-    sortBy?: string;
-    orderBy?: string;
-}
-
-export const getAll = async () => {
-    const res = await httpRequestCategory.get(`/get`);
+export const getAll = async ({
+    headers,
+    axiosJWT,
+}: globalInterface.ServiceParams) => {
+    const res = await axiosJWT.get(`/category/get`, { headers });
     return res.data;
 };
 
@@ -16,25 +12,38 @@ export const get = async ({
     page = 1,
     sortBy = "id",
     orderBy = "DESC",
-}: ProductParams) => {
-    const res = await httpRequestCategory.get(`/get?page=${page}`);
+    headers,
+    axiosJWT,
+}: globalInterface.ServiceParams) => {
+    const res = await axiosJWT.get(`/category/get?page=${page}`, { headers });
     return res.data;
 };
 
-export const createCategory = async (category: Category<File | null>) => {
-    const res = await httpRequestCategory.post("/create", category);
+export const createCategory = async (
+    { headers, axiosJWT }: globalInterface.ServiceParams,
+    { category }: { category: globalInterface.Category<File | null> }
+) => {
+    const res = await axiosJWT.post("/category/create", category, { headers });
     return res.data;
 };
 
 export const updateCategory = async (
-    id: number,
-    category: Category<File | null | string>
+    { headers, axiosJWT }: globalInterface.ServiceParams,
+    {
+        id,
+        category,
+    }: { id: number; category: globalInterface.Category<File | null | string> }
 ) => {
-    const res = await httpRequestCategory.put(`/update/${id}`, category);
+    const res = await axiosJWT.put(`/category/update/${id}`, category, {
+        headers,
+    });
     return res.data;
 };
 
-export const deleteCategory = async (id: number) => {
-    const res = await httpRequestCategory.delete(`/delete/${id}`);
+export const deleteCategory = async (
+    { headers, axiosJWT }: globalInterface.ServiceParams,
+    { id }: { id: number }
+) => {
+    const res = await axiosJWT.delete(`/category/delete/${id}`, { headers });
     return res.data;
 };

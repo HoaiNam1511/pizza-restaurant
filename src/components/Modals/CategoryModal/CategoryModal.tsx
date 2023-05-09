@@ -1,34 +1,33 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import classNames from "classnames/bind";
 
-import * as categoryService from "../../../services/categoryService";
 import styles from "./CategoryModal.module.scss";
 import Modal from "../Modal/Modal";
 import UploadImage from "../../UploadImage/UploadImage";
 import InputForm from "../../InputForm/InputForm";
 
-import { Category } from "../../../pages/Category/Category";
-import {
-    selectModalTitleStatus,
-    selectCategoryDetail,
-} from "../../../redux/selector";
+import * as categoryService from "../../../services/categoryService";
+import * as selectorState from "../../../redux/selector";
+import * as globalInterface from "../../../types";
+
 import { reloadFunc } from "../../../redux/slice/globalSlice";
-import { useSelector, useDispatch } from "react-redux";
 import { categoryInit } from "../../../pages/Category/Category";
+import { axiosCreateJWT } from "../../../util/jwtRequest";
+import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
-
-type AsyncFunction<T> = () => Promise<T>;
 
 function CategoryModal() {
     let formData: any = new FormData();
     const dispatch = useDispatch();
     const [category, setCategory] =
-        useState<Category<File | null>>(categoryInit);
+        useState<globalInterface.Category<File | null>>(categoryInit);
     const { id, name, image } = category;
 
-    const categoryDetail = useSelector(selectCategoryDetail);
-    const modalTitle = useSelector(selectModalTitleStatus);
+    const categoryDetail = useSelector(selectorState.selectCategoryDetail);
+    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
     const handleUploadFile = (event: any): void => {
         setCategory({ ...category, image: event.target.files?.[0] });
@@ -51,7 +50,21 @@ function CategoryModal() {
     const create = async (): Promise<void> => {
         try {
             addFormData();
-            await categoryService.createCategory(formData);
+            await categoryService.createCategory(
+                {
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                    headers: {
+                        token: currentAccount?.token,
+                    },
+                },
+                {
+                    category: formData,
+                }
+            );
             dispatch(reloadFunc());
             setCategory(categoryInit);
         } catch (err) {
@@ -62,7 +75,22 @@ function CategoryModal() {
     const update = async (): Promise<void> => {
         try {
             addFormData();
-            await categoryService.updateCategory(categoryDetail.id, formData);
+            await categoryService.updateCategory(
+                {
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                    headers: {
+                        token: currentAccount?.token,
+                    },
+                },
+                {
+                    category: formData,
+                    id: categoryDetail.id,
+                }
+            );
             dispatch(reloadFunc());
         } catch (err) {
             console.log(err);

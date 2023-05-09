@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import classNames from "classnames/bind";
 import { useDispatch, useSelector } from "react-redux";
+import classNames from "classnames/bind";
 
 import styles from "./Booking.module.scss";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
 import SelectAction from "../../components/SelectAction/SelectAction";
 import BookingModal from "../../components/Modals/BookingModal/BookingModal";
+
 import * as bookingService from "../../services/bookingService";
+import * as selectorState from "../../redux/selector";
+import * as globalInterface from "../../types";
 
 import {
     modalCreate,
@@ -15,28 +18,13 @@ import {
     reloadFunc,
     addPageCount,
 } from "../../redux/slice/globalSlice";
-import { setBookingDetail, BookingData } from "../../redux/slice/bookingSlice";
+import { setBookingDetail } from "../../redux/slice/bookingSlice";
 import { ActionButton } from "../../components/Buttons";
-import { bookingStatusData } from "../../data/index";
-import { selectReload, selectCurrentPage } from "../../redux/selector";
-import { columnTable } from "../../data/index";
-import { Sort } from "../../types/";
-import { Table } from "../Table/Table";
+import { bookingStatusData, columnTable } from "../../data/index";
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
-
-export interface Booking {
-    id?: number;
-    customerName: string;
-    customerEmail: string;
-    customerPhone: number;
-    bookingDate: any;
-    bookingTime: any;
-    partySize: number;
-    bookingStatus: string;
-    note: string;
-    tableId: number;
-}
 
 export interface BookingApi {
     id: number;
@@ -49,15 +37,18 @@ export interface BookingApi {
     party_size: number;
     note: string;
     table_id: number;
-    table: Table;
+    table: globalInterface.Table;
 }
 
 function Booking() {
     const dispatch = useDispatch();
     const [listBooking, setListBooking] = useState<[]>([]);
-    const [booking, setBooking] = useState<Booking | null>(null);
-    const pageChange = useSelector(selectCurrentPage);
-    const reload = useSelector(selectReload);
+    const [booking, setBooking] = useState<globalInterface.Booking | null>(
+        null
+    );
+    const pageChange = useSelector(selectorState.selectCurrentPage);
+    const reload = useSelector(selectorState.selectReload);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
     //Handle create booking
     const handleCreateBooking = (): void => {
@@ -72,6 +63,14 @@ function Booking() {
                 page: pageChange,
                 orderBy,
                 sortBy,
+                headers: {
+                    token: currentAccount?.token,
+                },
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
             });
             setListBooking(res.data);
             dispatch(addPageCount(res.totalPage));
@@ -80,7 +79,7 @@ function Booking() {
         }
     };
 
-    const sortBooking = async ({ orderBy, sortBy }: Sort) => {
+    const sortBooking = async ({ orderBy, sortBy }: globalInterface.Sort) => {
         getBooking({ orderBy, sortBy });
     };
 
@@ -105,7 +104,22 @@ function Booking() {
     const updateBooking = async (): Promise<void> => {
         try {
             if (booking && booking.id !== undefined) {
-                await bookingService.update(booking, booking.id);
+                await bookingService.update(
+                    {
+                        headers: {
+                            token: currentAccount?.token,
+                        },
+                        axiosJWT: axiosCreateJWT(
+                            currentAccount,
+                            dispatch,
+                            loginSuccess
+                        ),
+                    },
+                    {
+                        booking: booking,
+                        id: booking.id,
+                    }
+                );
                 dispatch(reloadFunc());
                 getBooking({});
             }
@@ -115,7 +129,7 @@ function Booking() {
     };
 
     //Handle update
-    const handleUpdateBooking = (booking: BookingData) => {
+    const handleUpdateBooking = (booking: globalInterface.BookingData) => {
         dispatch(setBookingDetail(booking));
         dispatch(modalUpdate());
         dispatch(openModal());

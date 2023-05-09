@@ -13,10 +13,12 @@ import { reloadFunc } from "../../../redux/slice/globalSlice";
 import {
     selectModalTitleStatus,
     selectBookingDetail,
+    selectCurrentAccount,
 } from "../../../redux/selector";
-import { Booking } from "../../../pages/Booking/Booking";
-import { Table } from "../../../pages/Table/Table";
-import { partySizeData, PartySizeData } from "../../../data/index";
+import { partySizeData } from "../../../data/index";
+import * as globalInterface from "../../../types";
+import { axiosCreateJWT } from "../../../util/jwtRequest";
+import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const bookingInit = {
     customerName: "",
@@ -34,12 +36,18 @@ const cx = classNames.bind(styles);
 function BookingModal() {
     const refSelect = useRef<any>(null);
     const dispatch = useDispatch();
-    const [booking, setBooking] = useState<Booking>(bookingInit);
-    const [tables, setTable] = useState<Table[]>([]);
-    const [quantityTable, setQuantityTable] = useState<PartySizeData[]>([]);
-    const [tableFilter, setTableFilter] = useState<Table[]>([]);
+
+    const [booking, setBooking] =
+        useState<globalInterface.Booking>(bookingInit);
+    const [tables, setTable] = useState<globalInterface.Table[]>([]);
+    const [quantityTable, setQuantityTable] = useState<
+        globalInterface.PartySizeData[]
+    >([]);
+    const [tableFilter, setTableFilter] = useState<globalInterface.Table[]>([]);
+
     const modalTitle = useSelector(selectModalTitleStatus);
     const bookingDetail = useSelector(selectBookingDetail);
+    const currentAccount = useSelector(selectCurrentAccount);
 
     const {
         customerName,
@@ -52,8 +60,8 @@ function BookingModal() {
         tableId,
     } = booking;
 
-    //Handle when input change
-    const handleBookingChange = (
+    //Handle event change
+    const handleEventChange = (
         event:
             | React.ChangeEvent<HTMLInputElement>
             | React.ChangeEvent<HTMLSelectElement>
@@ -73,9 +81,25 @@ function BookingModal() {
         }
     };
 
+    //Update booking
     const update = async (): Promise<void> => {
         try {
-            await bookingService.update(booking, bookingDetail.id);
+            await bookingService.update(
+                {
+                    headers: {
+                        token: currentAccount?.token,
+                    },
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                },
+                {
+                    booking: booking,
+                    id: booking.id || 0,
+                }
+            );
             dispatch(reloadFunc());
             getTable();
         } catch (err) {
@@ -83,9 +107,20 @@ function BookingModal() {
         }
     };
 
+    //Get table available
     const getTable = async () => {
         try {
-            const response = await bookingService.getTable({ used: false });
+            const response = await bookingService.getTable(
+                {
+                    headers: { token: currentAccount?.token },
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                },
+                { used: false }
+            );
             setTable(response);
             setBooking({
                 ...booking,
@@ -97,7 +132,7 @@ function BookingModal() {
         }
     };
 
-    //Handle when button click
+    //Handle btn click create or update account
     const handleCreateBooking = (): void => {
         if (modalTitle === process.env.REACT_APP_CREATE_VALUE) {
             create();
@@ -106,6 +141,7 @@ function BookingModal() {
         }
     };
 
+    //Handle data quantity table
     const updateQuantityTable = (): void => {
         let quantityObj: any = {};
         for (let i = 0; i < tables.length; i++) {
@@ -130,6 +166,7 @@ function BookingModal() {
         setQuantityTable(result);
     };
 
+    //Handle party size
     const handlePartySizeChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
@@ -137,7 +174,7 @@ function BookingModal() {
         const quantity = Number(selectedOption.dataset.quantity);
 
         if (quantity) {
-            const filterTable: Table[] = tables.filter(
+            const filterTable: globalInterface.Table[] = tables.filter(
                 (table) => table.table_size >= event.target.value
             );
             setTableFilter(filterTable);
@@ -151,14 +188,7 @@ function BookingModal() {
         }
     };
 
-    useEffect(() => {
-        getTable();
-    }, []);
-
-    useEffect(() => {
-        updateQuantityTable();
-    }, [tables]);
-
+    //Set information when update
     useEffect(() => {
         if (bookingDetail !== null) {
             setBooking({
@@ -175,6 +205,14 @@ function BookingModal() {
         }
     }, [bookingDetail]);
 
+    useEffect(() => {
+        updateQuantityTable();
+    }, [tables]);
+
+    useEffect(() => {
+        getTable();
+    }, []);
+
     return (
         <Modal headerTitle="Booking ">
             <div
@@ -188,7 +226,7 @@ function BookingModal() {
                         <InputForm
                             label="Customer Name"
                             name="customerName"
-                            onChange={(e) => handleBookingChange(e)}
+                            onChange={(e) => handleEventChange(e)}
                             placeholder="Name"
                             type="text"
                             value={customerName}
@@ -198,7 +236,7 @@ function BookingModal() {
                         <InputForm
                             label="Email"
                             name="customerEmail"
-                            onChange={(e) => handleBookingChange(e)}
+                            onChange={(e) => handleEventChange(e)}
                             placeholder="Email"
                             type="text"
                             value={customerEmail}
@@ -209,7 +247,7 @@ function BookingModal() {
                             <InputForm
                                 label="Phone"
                                 name="customerPhone"
-                                onChange={(e) => handleBookingChange(e)}
+                                onChange={(e) => handleEventChange(e)}
                                 placeholder="Phone"
                                 type="text"
                                 value={customerPhone}
@@ -222,7 +260,7 @@ function BookingModal() {
                             <select
                                 className={cx("input")}
                                 name="bookingStatus"
-                                onChange={(e) => handleBookingChange(e)}
+                                onChange={(e) => handleEventChange(e)}
                                 value={bookingStatus}
                             >
                                 {bookingStatusData.map((item, index) => (
@@ -238,7 +276,7 @@ function BookingModal() {
                             <InputForm
                                 label="Date"
                                 name="bookingDate"
-                                onChange={(e) => handleBookingChange(e)}
+                                onChange={(e) => handleEventChange(e)}
                                 placeholder=""
                                 type="date"
                                 value={bookingDate}
@@ -248,7 +286,7 @@ function BookingModal() {
                             <InputForm
                                 label="Time"
                                 name="bookingTime"
-                                onChange={(e) => handleBookingChange(e)}
+                                onChange={(e) => handleEventChange(e)}
                                 placeholder=""
                                 type="time"
                                 value={bookingTime}
@@ -285,7 +323,7 @@ function BookingModal() {
                             <select
                                 className={cx("input")}
                                 name="tableId"
-                                onChange={(e) => handleBookingChange(e)}
+                                onChange={(e) => handleEventChange(e)}
                                 value={tableId}
                             >
                                 {tableFilter.length

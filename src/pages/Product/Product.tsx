@@ -1,36 +1,33 @@
-import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import styles from "./Product.module.scss";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
-import * as productService from "../../services/productService";
 import ProductModal from "../../components/Modals/ProductModal/ProductModal";
 
-import { setProductDetail } from "../../redux/slice/productSlice";
+import * as productService from "../../services/productService";
+import * as globalInterface from "../../types";
+import * as staticData from "../../data";
+
 import {
     modalUpdate,
     modalCreate,
     reloadFunc,
     openModal,
 } from "../../redux/slice/globalSlice";
+import {
+    selectReload,
+    selectCurrentPage,
+    selectCurrentAccount,
+} from "../../redux/selector";
+import { setProductDetail } from "../../redux/slice/productSlice";
 import { ActionButton } from "../../components/Buttons/index";
-import { selectReload, selectCurrentPage } from "../../redux/selector";
 import { addPageCount } from "../../redux/slice/globalSlice";
-import { Sort } from "../../types";
-import { columnTable } from "../../data/index";
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
-
-export interface Product<T> {
-    id?: number;
-    name: string;
-    price: number;
-    material: string;
-    description: string;
-    image: T;
-    categories: number[];
-}
 
 export interface AsyncFunction<T> {
     (): Promise<T>;
@@ -38,18 +35,25 @@ export interface AsyncFunction<T> {
 
 function Product() {
     const dispatch = useDispatch();
-    const [products, setProducts] = useState<Product<string>[]>([]);
+    const [products, setProducts] = useState<globalInterface.Product<string>[]>(
+        []
+    );
     const reload = useSelector(selectReload);
     const pageChange = useSelector(selectCurrentPage);
+    const currentAccount = useSelector(selectCurrentAccount);
 
     const getAllProduct = async ({
         sortBy = "id",
         orderBy = "DESC",
-    }: Sort): Promise<void> => {
+    }: globalInterface.Sort): Promise<void> => {
         const allProduct = await productService.getAllProduct({
             page: pageChange,
             sortBy,
             orderBy,
+            headers: {
+                token: currentAccount?.token,
+            },
+            axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
         });
         setProducts(allProduct.data);
         dispatch(addPageCount(allProduct.totalPage));
@@ -62,7 +66,9 @@ function Product() {
     };
 
     //Handle update
-    const handleUpdateProduct = (product: Product<string>): void => {
+    const handleUpdateProduct = (
+        product: globalInterface.Product<string>
+    ): void => {
         dispatch(setProductDetail(product));
         dispatch(modalUpdate());
         dispatch(openModal());
@@ -70,12 +76,24 @@ function Product() {
 
     //Handle update
     const handleDeleteProduct = async (id: number): Promise<void> => {
-        await productService.deleteProduct(id);
+        await productService.deleteProduct(
+            {
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+                headers: {
+                    token: currentAccount?.token,
+                },
+            },
+            { id: id }
+        );
         dispatch(reloadFunc());
     };
 
     //Sort
-    const handleSort = ({ orderBy, sortBy }: Sort) => {
+    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort) => {
         getAllProduct({ orderBy, sortBy });
     };
 
@@ -93,7 +111,9 @@ function Product() {
                         "product-header"
                     )}
                 >
-                    <h2 className={cx("product-header_title")}>Tabe Product</h2>
+                    <h2 className={cx("product-header_title")}>
+                        Table Product
+                    </h2>
                     <button
                         onClick={handleCreateProduct}
                         type="button"
@@ -115,7 +135,8 @@ function Product() {
                                         onClick={(orderBy) =>
                                             handleSort({
                                                 orderBy,
-                                                sortBy: columnTable.id,
+                                                sortBy: staticData.columnTable
+                                                    .id,
                                             })
                                         }
                                     />
@@ -128,7 +149,8 @@ function Product() {
                                         onClick={(orderBy) =>
                                             handleSort({
                                                 orderBy,
-                                                sortBy: columnTable.price,
+                                                sortBy: staticData.columnTable
+                                                    .price,
                                             })
                                         }
                                     />

@@ -1,6 +1,7 @@
-import styles from "./Navbar.module.scss";
 import classNames from "classnames/bind";
 import SearchIcon from "@mui/icons-material/Search";
+
+import styles from "./Navbar.module.scss";
 import avatar from "../../../../assets/image/10219.jpg";
 const cx = classNames.bind(styles);
 

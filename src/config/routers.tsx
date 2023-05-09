@@ -6,6 +6,7 @@ const routes = {
     login: "/login",
     booking: "/booking",
     table: "/table",
-    home: "/",
+    dashboard: "/dashboard",
+    reset: "/reset",
 };
 export default routes;

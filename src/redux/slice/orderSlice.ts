@@ -1,9 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { Order } from "../../pages/Order/Order";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import * as globalInterface from "../../types";
 interface OrderState {
-    orderDetail: Order | null;
+    orderDetail: globalInterface.Order | null;
 }
 
 const orderInitial: OrderState = {
@@ -14,7 +13,10 @@ const orderSlice = createSlice({
     name: "order",
     initialState: orderInitial,
     reducers: {
-        setOrderDetail: (state: OrderState, action: PayloadAction<Order>) => {
+        setOrderDetail: (
+            state: OrderState,
+            action: PayloadAction<globalInterface.Order>
+        ) => {
             state.orderDetail = action.payload;
         },
     },

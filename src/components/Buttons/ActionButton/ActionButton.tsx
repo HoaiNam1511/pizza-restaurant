@@ -4,8 +4,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
 import styles from "./ActionButton.module.scss";
-const cx = classNames.bind(styles);
 
+const cx = classNames.bind(styles);
 interface ActionButtonProps {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     className?: string;

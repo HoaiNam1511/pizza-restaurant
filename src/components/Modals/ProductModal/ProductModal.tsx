@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import classNames from "classnames/bind";
 
-import * as categoryService from "../../../services/categoryService";
 import styles from "./ProductModal.module.scss";
 import Modal from "../Modal/Modal";
 import UploadImage from "../../UploadImage/UploadImage";
 import InputForm from "../../InputForm/InputForm";
 
-import { Product } from "../../../pages/Product/Product";
+import * as categoryService from "../../../services/categoryService";
+import * as globalInterface from "../../../types";
+import * as selectorState from "../../../redux/selector";
+
 import { createProduct, updateProduct } from "../../../services/productService";
-import { Category } from "../../../pages/Category/Category";
-import {
-    selectProductDetail,
-    selectModalTitleStatus,
-} from "../../../redux/selector";
 import { reloadFunc } from "../../../redux/slice/globalSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { axiosCreateJWT } from "../../../util/jwtRequest";
+import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
 
@@ -34,10 +33,16 @@ const productInit = {
 function CategoryModal() {
     let productData: any = new FormData();
     const dispatch = useDispatch();
-    const [product, setProduct] = useState<Product<File | null>>(productInit);
-    const [categorys, setCategorys] = useState<Category<File | null>[]>([]);
-    const productDetail = useSelector(selectProductDetail);
-    const modalTitle = useSelector(selectModalTitleStatus);
+
+    const [product, setProduct] =
+        useState<globalInterface.Product<File | null>>(productInit);
+    const [categorys, setCategorys] = useState<
+        globalInterface.Category<File | null>[]
+    >([]);
+
+    const productDetail = useSelector(selectorState.selectProductDetail);
+    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
     const { id, name, price, material, description, image, categories } =
         product;
@@ -70,7 +75,21 @@ function CategoryModal() {
     const create = async (): Promise<void> => {
         try {
             addProductFormData();
-            await createProduct(productData);
+            await createProduct(
+                {
+                    headers: {
+                        token: currentAccount?.token,
+                    },
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                },
+                {
+                    product: productData,
+                }
+            );
             dispatch(reloadFunc());
             setProduct(productInit);
         } catch (err) {
@@ -81,7 +100,22 @@ function CategoryModal() {
     const update = async (): Promise<void> => {
         try {
             addProductFormData();
-            await updateProduct(productDetail.id, productData);
+            await updateProduct(
+                {
+                    headers: {
+                        token: currentAccount?.token,
+                    },
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                },
+                {
+                    id: productDetail.id,
+                    product: productData,
+                }
+            );
             dispatch(reloadFunc());
         } catch (err) {
             console.log(err);
@@ -91,7 +125,16 @@ function CategoryModal() {
     //Get category
     const getCategory: AsyncFunction<void> = async (): Promise<void> => {
         try {
-            const res = await categoryService.getAll();
+            const res = await categoryService.getAll({
+                headers: {
+                    token: currentAccount?.token,
+                },
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+            });
             setCategorys(res.data);
         } catch (err) {
             console.log(err);

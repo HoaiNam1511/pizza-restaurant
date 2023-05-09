@@ -1,10 +1,13 @@
-import styles from "./MainLayout.module.scss";
 import classNames from "classnames/bind";
+import { useSelector, useDispatch } from "react-redux";
+
+import styles from "./MainLayout.module.scss";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Navbar from "./components/Navbar/Navbar";
 import Paginate from "../../components/Paginate/Paginate";
-import { useSelector, useDispatch } from "react-redux";
-import { selectPageCount } from "../../redux/selector";
+
+import * as selectorState from "../../redux/selector";
+
 import { addPage } from "../../redux/slice/globalSlice";
 
 type ChildrenProps = {
@@ -14,7 +17,7 @@ type ChildrenProps = {
 const cx = classNames.bind(styles);
 function MainLayout({ children }: ChildrenProps) {
     const dispatch = useDispatch();
-    const pageCount = useSelector(selectPageCount);
+    const pageCount = useSelector(selectorState.selectPageCount);
 
     return (
         <div className={cx("container-fluid gx-0", "wrapper")}>

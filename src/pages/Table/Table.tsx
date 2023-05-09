@@ -1,31 +1,50 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames/bind";
 
 import styles from "./Table.module.scss";
-import * as bookingServices from "../../services/bookingService";
 import tableImage from "../../assets/image/wooden-dining-table-chairs-isolated-white-background-image-84995256.jpg";
 
+import * as bookingServices from "../../services/bookingService";
+import * as globalInterface from "../../types";
+import * as selectorState from "../../redux/selector";
+
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
 import { addPageCount } from "../../redux/slice/globalSlice";
-export interface Table {
-    id: number;
-    table_title: string;
-    table_size: string;
-    table_used: string;
-}
 
 const cx = classNames.bind(styles);
 function Table() {
     const dispatch = useDispatch();
-    const [tables, setTable] = useState<Table[]>([]);
+    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const [tables, setTable] = useState<globalInterface.Table[]>([]);
     const [status, setStatus] = useState<boolean | null>(null);
+
     const getTable = async () => {
         try {
             let response;
             if (status === null) {
-                response = await bookingServices.getAllTable();
+                response = await bookingServices.getAllTable({
+                    headers: { token: currentAccount?.token },
+
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                });
             } else {
-                response = await bookingServices.getTable({ used: status });
+                response = await bookingServices.getTable(
+                    {
+                        headers: { token: currentAccount?.token },
+                        axiosJWT: axiosCreateJWT(
+                            currentAccount,
+                            dispatch,
+                            loginSuccess
+                        ),
+                    },
+                    { used: status }
+                );
             }
             setTable(response);
         } catch (err) {

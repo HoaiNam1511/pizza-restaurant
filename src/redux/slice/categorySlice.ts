@@ -1,9 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Category } from "../../pages/Category/Category";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import * as globalInterface from "../../types";
 
 interface CategoryState {
-    categoryDetail: Category<string | null>;
+    categoryDetail: globalInterface.Category<string | null>;
 }
 
 const initialState = {
@@ -20,7 +19,7 @@ export const categorySlice = createSlice({
     reducers: {
         setCategoryDetail: (
             state: CategoryState,
-            action: PayloadAction<Category<string>>
+            action: PayloadAction<globalInterface.Category<string>>
         ) => {
             state.categoryDetail = action.payload;
         },

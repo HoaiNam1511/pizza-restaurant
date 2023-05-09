@@ -5,12 +5,13 @@ import Product from "../pages/Product/Product";
 import Category from "../pages/Category/Category";
 import Order from "../pages/Order/Order";
 import Booking from "../pages/Booking/Booking";
-import User from "../pages/User/User";
+import User from "../pages/Account/Account";
 import Table from "../pages/Table/Table";
+import ResetPassword from "../pages/Login/ResetPassword";
 
 const routers = [
     {
-        path: config.routes.home,
+        path: config.routes.dashboard,
         page: Home,
         layout: MainLayout,
     },

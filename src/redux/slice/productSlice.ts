@@ -1,7 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { Product } from "../../pages/Product/Product";
-
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import * as globalInterface from "../../types";
 export interface ProductState {
     productDetail: any;
 }
@@ -16,7 +14,7 @@ export const productSlice = createSlice({
     reducers: {
         setProductDetail: (
             state: ProductState,
-            action: PayloadAction<Product<string>>
+            action: PayloadAction<globalInterface.Product<string>>
         ) => {
             state.productDetail = action.payload;
         },

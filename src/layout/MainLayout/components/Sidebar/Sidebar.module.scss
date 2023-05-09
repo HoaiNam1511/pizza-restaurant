@@ -6,8 +6,11 @@
     background-color: #fff !important;
     color: #697a8d;
     box-shadow: $main-box-shadow;
-
+    position: relative;
     .brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-top: 12px;
         height: 64px;
         padding: 0 32px;
@@ -25,41 +28,47 @@
 
     //Nav
     .nav-list {
+        margin-top: 20px;
     }
 
     .nav-item {
+        display: flex;
+        align-items: center;
+        position: relative;
         height: 43px;
         width: 100%;
-        // background-color: $primary-background-color;
         padding: 0px 16px;
         text-decoration: none;
         color: #697a8d;
-        transition-duration: 0.3s;
-        transition-property: color, background-color;
+        // transition-duration: 0.3s;
+        // transition-property: color, background-color;
         &:hover {
             background-color: #f8f8f9;
             color: #566a7f;
         }
+
+        &:nth-last-child(1) {
+            position: absolute;
+            bottom: 20px;
+        }
     }
 
     .active {
-        position: relative;
         background-color: $primary-background-color;
         color: $primary-color;
-
         &:hover {
             background-color: $primary-background-color;
             color: $primary-color;
         }
 
         &::before {
-            position: absolute;
-            left: 0;
+            content: "";
             top: 0;
             bottom: 0;
-            width: 10px;
-            height: 20px;
-            background-color: red;
+            left: 0;
+            width: 3px;
+            position: absolute;
+            background: $primary-color;
         }
     }
 

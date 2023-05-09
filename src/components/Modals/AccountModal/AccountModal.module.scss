@@ -1,0 +1,49 @@
+@import "../../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../../scss/mixin";
+
+.wrapper-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .form {
+    }
+
+    .form-item {
+        margin-bottom: 10px;
+        flex: 1;
+    }
+
+    .label {
+        text-align: start;
+        display: block;
+        font-size: 1.4rem;
+        font-weight: 400;
+        text-transform: capitalize;
+    }
+
+    .form-item {
+        margin-bottom: 10px;
+        flex: 1;
+    }
+
+    .item-2 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .form-flex {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+    .input {
+        @include input-custom_1;
+    }
+
+    .btn-add {
+        margin-top: 15px;
+        @include primary-btn_outline;
+        width: 80px;
+        text-transform: capitalize;
+    }
+}

@@ -1,21 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { PayloadAction } from "@reduxjs/toolkit";
-
-export interface BookingData {
-    id: number;
-    customer_name: string;
-    customer_email: string;
-    customer_phone: number;
-    booking_date: any;
-    booking_time: any;
-    booking_status: string;
-    party_size: number;
-    note: string;
-    table_id: number;
-}
-
+import * as globalInterface from "../../types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface BookingState {
-    categoryDetail: BookingData | null;
+    categoryDetail: globalInterface.BookingData | null;
 }
 
 const initialState = {
@@ -39,7 +25,7 @@ export const categorySlice = createSlice({
     reducers: {
         setBookingDetail: (
             state: BookingState,
-            action: PayloadAction<BookingData>
+            action: PayloadAction<globalInterface.BookingData>
         ) => {
             state.categoryDetail = action.payload;
         },
