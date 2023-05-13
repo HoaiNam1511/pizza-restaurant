@@ -6,6 +6,8 @@ import styles from "./OrderModal.module.scss";
 import { selectOrderDetail } from "../../../redux/selector";
 import DetailItem from "./DetailItem";
 import * as globalInterface from "../../../types";
+import { convertToUSD } from "../../../custom";
+import moment from "moment";
 
 const cx = classNames.bind(styles);
 export interface Detail {
@@ -91,12 +93,14 @@ function OrderModal() {
                                                 {product.order_details.quantity}
                                             </td>
                                             <td className={cx("col-2")}>
-                                                {product.price}
+                                                {convertToUSD(product.price)}
                                             </td>
                                             <td className={cx("col-3")}>
-                                                {product.price *
-                                                    product.order_details
-                                                        .quantity}
+                                                {convertToUSD(
+                                                    product.price *
+                                                        product.order_details
+                                                            .quantity
+                                                )}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -115,26 +119,37 @@ function OrderModal() {
                             </thead>
                             <tbody>
                                 {product.length > 0
-                                    ? product.map(
-                                          (
-                                              productDetail: Detail,
-                                              index: number
-                                          ) => (
-                                              <tr
-                                                  className={cx("row g-0")}
-                                                  key={index}
-                                              >
-                                                  <td className={cx("col-6")}>
-                                                      {productDetail.title}
-                                                  </td>
-                                                  <td className={cx("col-6")}>
-                                                      {productDetail.value}
-                                                  </td>
-                                              </tr>
+                                    ? product
+                                          .slice(0, product.length - 1)
+                                          .map(
+                                              (
+                                                  productDetail: Detail,
+                                                  index: number
+                                              ) => (
+                                                  <tr
+                                                      className={cx("row g-0")}
+                                                      key={index}
+                                                  >
+                                                      <td
+                                                          className={cx(
+                                                              "col-6"
+                                                          )}
+                                                      >
+                                                          {productDetail.title}
+                                                      </td>
+                                                      <td
+                                                          className={cx(
+                                                              "col-6"
+                                                          )}
+                                                      >
+                                                          {productDetail.value}
+                                                      </td>
+                                                  </tr>
+                                              )
                                           )
-                                      )
-                                    : productDetailList.map(
-                                          (productDetail, index) => (
+                                    : productDetailList
+                                          .slice(0, product.length - 1)
+                                          .map((productDetail, index) => (
                                               <tr
                                                   className={cx("row g-0")}
                                                   key={index}
@@ -148,8 +163,7 @@ function OrderModal() {
                                                           : ""}
                                                   </td>
                                               </tr>
-                                          )
-                                      )}
+                                          ))}
                             </tbody>
                         </table>
                     </div>
@@ -161,11 +175,14 @@ function OrderModal() {
                             <>
                                 <DetailItem
                                     title="Order Code"
-                                    value={orderDetail.order_code}
+                                    value={orderDetail.order_code.toUpperCase()}
                                 />
                                 <DetailItem
                                     title="Order Created"
-                                    value={orderDetail.order_date}
+                                    value={moment(
+                                        orderDetail.order_date,
+                                        "YYYY-MM-DD"
+                                    ).format("DD/MM/YYYY")}
                                 />
                                 <DetailItem
                                     title="Order Status"
@@ -181,7 +198,9 @@ function OrderModal() {
                                 />
                                 <DetailItem
                                     title="Total"
-                                    value={total !== null ? total : 0}
+                                    value={
+                                        total !== null ? convertToUSD(total) : 0
+                                    }
                                 />
                             </>
                         )}

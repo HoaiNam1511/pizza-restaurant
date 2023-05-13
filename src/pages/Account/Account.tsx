@@ -17,6 +17,7 @@ import {
     modalUpdate,
     reloadFunc,
     addPageCount,
+    setToast,
 } from "../../redux/slice/globalSlice";
 import { ActionButton } from "../../components/Buttons";
 import { setAccountDetail } from "../../redux/slice/accountSlice";
@@ -43,7 +44,6 @@ function User() {
     //Api
     const getAccount = async ({ orderBy = "DESC", sortBy = "id" }) => {
         try {
-            console.log("come");
             let page = pageChange;
             const res = await accountServices.get({
                 page,
@@ -65,7 +65,7 @@ function User() {
 
     const handleDelete = async (id: number) => {
         try {
-            await accountServices.deleteAccount(
+            const res = await accountServices.deleteAccount(
                 {
                     headers: { token: currentAccount?.token },
 
@@ -80,13 +80,10 @@ function User() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
         } catch (err) {
             console.log(err);
         }
-    };
-
-    const sortBooking = async ({ orderBy, sortBy }: globalInterface.Sort) => {
-        getAccount({ orderBy, sortBy });
     };
 
     //Handle update

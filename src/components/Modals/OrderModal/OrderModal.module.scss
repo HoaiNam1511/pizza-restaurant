@@ -55,6 +55,7 @@ $text-color: #566a7f;
     }
 
     .title-header {
+        color: $text-color;
         margin-bottom: 20px;
     }
 
@@ -73,12 +74,12 @@ $text-color: #566a7f;
     }
 
     .item-title:nth-child(1) {
-        font-weight: 700;
+        font-weight: 500;
         color: $text-color;
     }
 
     .image {
-        width: 60px;
+        width: 50px;
         object-fit: cover;
         margin-right: 20px;
     }

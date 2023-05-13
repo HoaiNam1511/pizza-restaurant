@@ -8,6 +8,7 @@ interface InputForm {
     type: string;
     placeholder: string;
     value: any;
+    disabled?: boolean;
 }
 
 const cx = classNames.bind(styles);
@@ -19,6 +20,7 @@ function InputForm({
     value,
     onChange,
     label,
+    disabled,
 }: InputForm) {
     return (
         <>
@@ -26,6 +28,7 @@ function InputForm({
                 {label}
             </label>
             <input
+                disabled={disabled}
                 name={name}
                 className={cx("input")}
                 type={type}

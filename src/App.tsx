@@ -7,13 +7,9 @@ import ResetPassword from "./pages/Login/ResetPassword";
 import { useSelector } from "react-redux";
 import * as selectState from "./redux/selector";
 import config from "./config";
+import { toast } from "react-toastify";
 function App() {
     const currentAccount = useSelector(selectState.selectCurrentAccount);
-    // const navigate = useNavigate();
-    // if (currentAccount) {
-    //     navigate(config.routes.login);
-    //     return null;
-    // }
     return (
         <div className="App">
             <Router>

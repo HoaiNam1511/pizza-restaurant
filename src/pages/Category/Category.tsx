@@ -13,6 +13,7 @@ import {
     modalCreate,
     reloadFunc,
     openModal,
+    setToast,
 } from "../../redux/slice/globalSlice";
 import { ActionButton } from "../../components/Buttons/index";
 import * as selectorState from "../../redux/selector";
@@ -74,7 +75,7 @@ function Category() {
 
     //Handle delete
     const handleDeleteCategory = async (id: number): Promise<void> => {
-        await categoryService.deleteCategory(
+        const res = await categoryService.deleteCategory(
             {
                 headers: {
                     token: currentAccount?.token,
@@ -90,6 +91,7 @@ function Category() {
             }
         );
         dispatch(reloadFunc());
+        dispatch(setToast(res));
     };
 
     useEffect(() => {
@@ -99,14 +101,14 @@ function Category() {
     return (
         <div className={cx("row g-0", "wrapper")}>
             <CategoryModal></CategoryModal>
-            <div className={cx("category")}>
+            <div className={cx("content")}>
                 <div
                     className={cx(
                         "d-flex justify-content-between",
-                        "category-header"
+                        "content-header"
                     )}
                 >
-                    <h2 className={cx("category-header_title")}>
+                    <h2 className={cx("content-header_title")}>
                         Tabe Category
                     </h2>
                     <button
@@ -114,7 +116,7 @@ function Category() {
                         type="button"
                         className={cx(
                             "btn btn-outline-primary",
-                            "category-header_btn"
+                            "content-header_btn"
                         )}
                     >
                         Add

@@ -2,22 +2,21 @@
 @import "../../scss/mixin";
 
 .wrapper {
-    .category {
+    .content {
         min-height: calc(100vh - 150px);
         background-color: #ffffff;
         border-radius: 6px;
         margin-top: 20px;
-    }
+        .content-header {
+            padding: 10px 15px 0px;
+        }
 
-    .category-header {
-        padding: 10px 15px 0px;
-    }
+        .content-header_title {
+        }
 
-    .category-header_title {
-    }
-
-    .category-header_btn {
-        @include primary-btn_outline;
+        .content-header_btn {
+            @include primary-btn_outline;
+        }
     }
 
     //Table

@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import * as globalInterface from "../../types";
 export interface GlobalState {
     modalTitleStatus: string;
     reload: boolean;
     pageCount: number;
     page: number;
     modalIsOpen: boolean;
+    toast: globalInterface.Toast;
 }
 
 const initialState: GlobalState = {
@@ -14,6 +15,10 @@ const initialState: GlobalState = {
     pageCount: 0,
     page: 1,
     modalIsOpen: false,
+    toast: {
+        message: "",
+        action: "",
+    },
 };
 
 export const globalSlice = createSlice({
@@ -51,6 +56,13 @@ export const globalSlice = createSlice({
         openModal: (state: GlobalState) => {
             state.modalIsOpen = true;
         },
+
+        setToast: (
+            state: GlobalState,
+            actions: PayloadAction<globalInterface.Toast>
+        ) => {
+            state.toast = actions.payload;
+        },
     },
 });
 
@@ -62,6 +74,7 @@ export const {
     addPage,
     closeModal,
     openModal,
+    setToast,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

@@ -5,19 +5,26 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import GlobalStyle from "./components/GlobalStyle/GlobalStyle";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { store } from "./redux/store";
+import { store, persistor } from "./redux/store";
 import { Provider } from "react-redux";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Toast from "./components/Toast/Toast";
+import { PersistGate } from "redux-persist/integration/react";
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 root.render(
     <React.StrictMode>
-        <Provider store={store}>
-            <GlobalStyle>
-                <App />
-            </GlobalStyle>
-        </Provider>
+        <GlobalStyle>
+            <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                    <Toast />
+                    <App />
+                </PersistGate>
+            </Provider>
+        </GlobalStyle>
+        <ToastContainer pauseOnFocusLoss={false} limit={3} autoClose={4000} />
     </React.StrictMode>
 );
 

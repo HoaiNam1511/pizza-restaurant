@@ -11,7 +11,7 @@ import * as categoryService from "../../../services/categoryService";
 import * as selectorState from "../../../redux/selector";
 import * as globalInterface from "../../../types";
 
-import { reloadFunc } from "../../../redux/slice/globalSlice";
+import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { categoryInit } from "../../../pages/Category/Category";
 import { axiosCreateJWT } from "../../../util/jwtRequest";
 import { loginSuccess } from "../../../redux/slice/authSlice";
@@ -50,7 +50,7 @@ function CategoryModal() {
     const create = async (): Promise<void> => {
         try {
             addFormData();
-            await categoryService.createCategory(
+            const res = await categoryService.createCategory(
                 {
                     axiosJWT: axiosCreateJWT(
                         currentAccount,
@@ -66,6 +66,7 @@ function CategoryModal() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             setCategory(categoryInit);
         } catch (err) {
             console.log(err);
@@ -75,7 +76,7 @@ function CategoryModal() {
     const update = async (): Promise<void> => {
         try {
             addFormData();
-            await categoryService.updateCategory(
+            const res = await categoryService.updateCategory(
                 {
                     axiosJWT: axiosCreateJWT(
                         currentAccount,
@@ -92,6 +93,7 @@ function CategoryModal() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
         } catch (err) {
             console.log(err);
         }

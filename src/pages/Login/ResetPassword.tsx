@@ -92,19 +92,26 @@ function ResetPassword() {
                         onKeyDown={handleKeyDown}
                     ></input>
 
-                    <p
-                        className={cx("forgot-password")}
-                        onClick={handleChangeForm}
-                    >
-                        Back to login
-                    </p>
+                    <div className={cx("form-input-flex")}>
+                        <CheckboxCustom
+                            id="showPass"
+                            onChange={(e) =>
+                                setShowPassword((pre) =>
+                                    pre === "password" ? "text" : "password"
+                                )
+                            }
+                            value=""
+                            labelRight
+                            label="Show password"
+                        />
 
-                    <CheckboxCustom
-                        id="showPass"
-                        onChange={(e) => console.log()}
-                        value=""
-                        labelRight
-                    />
+                        <p
+                            className={cx("forgot-password")}
+                            onClick={handleChangeForm}
+                        >
+                            Back to login
+                        </p>
+                    </div>
 
                     <p
                         className={cx("error-message", {

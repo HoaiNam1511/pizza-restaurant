@@ -13,6 +13,7 @@ export const selectReload = (state: RootState) => state.globalReducer.reload;
 export const selectPageCount = (state: RootState) =>
     state.globalReducer.pageCount;
 export const selectCurrentPage = (state: RootState) => state.globalReducer.page;
+export const selectToast = (state: RootState) => state.globalReducer.toast;
 
 //Select category
 export const selectCategoryDetail = (state: RootState) =>

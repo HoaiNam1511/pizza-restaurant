@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames/bind";
+import moment from "moment";
 
 import styles from "./Booking.module.scss";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
@@ -17,6 +18,7 @@ import {
     modalUpdate,
     reloadFunc,
     addPageCount,
+    setToast,
 } from "../../redux/slice/globalSlice";
 import { setBookingDetail } from "../../redux/slice/bookingSlice";
 import { ActionButton } from "../../components/Buttons";
@@ -73,6 +75,7 @@ function Booking() {
                 ),
             });
             setListBooking(res.data);
+            dispatch(setToast(res));
             dispatch(addPageCount(res.totalPage));
         } catch (err) {
             console.log(err);
@@ -87,24 +90,34 @@ function Booking() {
         event: React.ChangeEvent<HTMLSelectElement>,
         booking: BookingApi
     ) => {
-        setBooking({
+        const newBooking = {
             id: booking.id,
             customerName: booking.customer_name,
-            customerEmail: booking.customer_email,
-            customerPhone: booking.customer_phone,
-            bookingDate: booking.booking_date,
-            bookingTime: booking.booking_time,
+            email: booking.customer_email,
+            phone: booking.customer_phone,
+            date: booking.booking_date,
+            time: booking.booking_time,
             partySize: booking.party_size,
             bookingStatus: event.target.value,
             note: booking.note,
             tableId: booking.table_id,
-        });
-    };
+        };
 
+        if (["done", "cancel"].includes(event.target.value)) {
+            const answer = window.confirm(
+                `Are you sure? booking will be disable when status is ${event.target.value}`
+            );
+            if (answer) {
+                setBooking(newBooking);
+            }
+        } else {
+            setBooking(newBooking);
+        }
+    };
     const updateBooking = async (): Promise<void> => {
         try {
             if (booking && booking.id !== undefined) {
-                await bookingService.update(
+                const res = await bookingService.update(
                     {
                         headers: {
                             token: currentAccount?.token,
@@ -121,7 +134,7 @@ function Booking() {
                     }
                 );
                 dispatch(reloadFunc());
-                getBooking({});
+                dispatch(setToast(res));
             }
         } catch (err) {
             console.log(err);
@@ -146,14 +159,14 @@ function Booking() {
     return (
         <div className={cx("row g-0", "wrapper")}>
             <BookingModal />
-            <div className={cx("booking")}>
+            <div className={cx("content")}>
                 <div
                     className={cx(
                         "d-flex justify-content-between",
-                        "booking-header"
+                        "content-header"
                     )}
                 >
-                    <h2 className={cx("booking-header_title")}>
+                    <h2 className={cx("content-header_title")}>
                         Table booking
                     </h2>
                     <div>
@@ -162,7 +175,7 @@ function Booking() {
                             type="button"
                             className={cx(
                                 "btn btn-outline-primary",
-                                "booking-header_btn--outline"
+                                "content-header_btn--outline"
                             )}
                         >
                             Add
@@ -183,7 +196,7 @@ function Booking() {
                                         onClick={(orderBy) =>
                                             sortBooking({
                                                 orderBy,
-                                                sortBy: columnTable.bookingTime,
+                                                sortBy: columnTable.bookingDate,
                                             })
                                         }
                                     />
@@ -220,10 +233,16 @@ function Booking() {
                                         {booking?.table.table_title}
                                     </td>
                                     <td className={cx("col-1")}>
-                                        {booking?.booking_date}
+                                        {moment(
+                                            booking?.booking_date,
+                                            "YYYY-MM-DD"
+                                        ).format("DD/MM/YYYY")}
                                     </td>
                                     <td className={cx("col-1")}>
-                                        {booking?.booking_time}
+                                        {moment(
+                                            booking?.booking_time,
+                                            "HH:mm "
+                                        ).format("hh:mm A")}
                                     </td>
                                     <td className={cx("col-2")}>
                                         <SelectAction

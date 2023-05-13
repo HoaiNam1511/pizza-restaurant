@@ -137,10 +137,10 @@ export interface Table {
 export interface Booking {
     id?: number;
     customerName: string;
-    customerEmail: string;
-    customerPhone: number;
-    bookingDate: any;
-    bookingTime: any;
+    email: string;
+    phone: number;
+    date: any;
+    time: any;
     partySize: number;
     bookingStatus: string;
     note: string;
@@ -196,4 +196,17 @@ export interface PasswordReset {
 export interface PasswordResetInfo {
     username: string;
     email: string;
+}
+
+export interface Toast {
+    message: string;
+    action: string;
+}
+
+export interface CardData {
+    Icon: any;
+    titleHeader: string;
+    mainTitle: string | number;
+    footerTitle: string;
+    cardColor: string;
 }

@@ -54,45 +54,6 @@ $main-border: 1px solid #cfcfcf;
         height: 30px;
     }
 
-    .checkbox-1 {
-        position: relative;
-    }
-    //input
-    .order-ckb {
-        visibility: hidden;
-    }
-    //label for input
-    .order-ckb-label {
-        //Checkbox custom
-        position: absolute;
-        height: 20px;
-        width: 20px;
-        left: 15px;
-        top: 0;
-        border: 1px solid #000;
-        //Check icon
-        &::after {
-            position: absolute;
-            content: "";
-            left: 35%;
-            top: 16%;
-            transform: translate(-50%, -50%);
-            height: 12px;
-            width: 6px;
-            border: 2px solid #000;
-            transform: rotate(45deg);
-            border-left: transparent;
-            border-top: transparent;
-            opacity: 0;
-        }
-    }
-
-    .active {
-        &::after {
-            opacity: 1;
-        }
-    }
-
     //Upload
     .image-container {
     }

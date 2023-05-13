@@ -9,7 +9,7 @@ import styles from "./BookingModal.module.scss";
 import InputForm from "../../InputForm/InputForm";
 
 import { bookingStatusData } from "../../../data/index";
-import { reloadFunc } from "../../../redux/slice/globalSlice";
+import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import {
     selectModalTitleStatus,
     selectBookingDetail,
@@ -22,12 +22,12 @@ import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const bookingInit = {
     customerName: "",
-    customerEmail: "",
-    customerPhone: 0,
-    bookingDate: new Date(),
-    bookingTime: new Date(),
-    partySize: 0,
-    bookingStatus: "",
+    email: "",
+    phone: 0,
+    date: new Date(),
+    time: new Date(),
+    partySize: 1,
+    bookingStatus: bookingStatusData[0].value,
     note: "",
     tableId: 0,
 };
@@ -51,10 +51,10 @@ function BookingModal() {
 
     const {
         customerName,
-        customerEmail,
-        customerPhone,
-        bookingDate,
-        bookingTime,
+        email,
+        phone,
+        date,
+        time,
         partySize,
         bookingStatus,
         tableId,
@@ -72,8 +72,9 @@ function BookingModal() {
     //Create booking
     const create = async (): Promise<void> => {
         try {
-            await bookingService.create(booking);
+            const res = await bookingService.create(booking);
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             setBooking(bookingInit);
             getTable();
         } catch (err) {
@@ -84,7 +85,7 @@ function BookingModal() {
     //Update booking
     const update = async (): Promise<void> => {
         try {
-            await bookingService.update(
+            const res = await bookingService.update(
                 {
                     headers: {
                         token: currentAccount?.token,
@@ -97,10 +98,11 @@ function BookingModal() {
                 },
                 {
                     booking: booking,
-                    id: booking.id || 0,
+                    id: bookingDetail.id,
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             getTable();
         } catch (err) {
             console.log(err);
@@ -166,6 +168,20 @@ function BookingModal() {
         setQuantityTable(result);
     };
 
+    const handleFilterTableAvailable = (size: number) => {
+        const filterTable: globalInterface.Table[] = tables.filter(
+            (table) =>
+                Number(table.table_size) >= size ||
+                Number(table.table_size) === 0
+        );
+        setTableFilter(filterTable);
+        setBooking({
+            ...booking,
+            tableId: filterTable[0]?.id,
+            partySize: bookingDetail.party_size,
+        });
+    };
+
     //Handle party size
     const handlePartySizeChange = (
         event: React.ChangeEvent<HTMLSelectElement>
@@ -174,14 +190,10 @@ function BookingModal() {
         const quantity = Number(selectedOption.dataset.quantity);
 
         if (quantity) {
-            const filterTable: globalInterface.Table[] = tables.filter(
-                (table) => table.table_size >= event.target.value
-            );
-            setTableFilter(filterTable);
+            handleFilterTableAvailable(Number(event.target.value));
             setBooking({
                 ...booking,
                 [event.target.name]: event.target.value,
-                tableId: filterTable[0].id,
             });
         } else {
             alert(`Table for party size is full`);
@@ -191,12 +203,13 @@ function BookingModal() {
     //Set information when update
     useEffect(() => {
         if (bookingDetail !== null) {
+            handleFilterTableAvailable(bookingDetail.party_size);
             setBooking({
                 customerName: bookingDetail.customer_name,
-                customerEmail: bookingDetail.customer_email,
-                customerPhone: bookingDetail.customer_phone,
-                bookingDate: bookingDetail.booking_date,
-                bookingTime: bookingDetail.booking_time,
+                email: bookingDetail.customer_email,
+                phone: bookingDetail.customer_phone,
+                date: bookingDetail.booking_date,
+                time: bookingDetail.booking_time,
                 partySize: bookingDetail.party_size,
                 bookingStatus: bookingDetail.booking_status,
                 note: "",
@@ -235,22 +248,22 @@ function BookingModal() {
                     <div className={cx("form-item")}>
                         <InputForm
                             label="Email"
-                            name="customerEmail"
+                            name="email"
                             onChange={(e) => handleEventChange(e)}
                             placeholder="Email"
                             type="text"
-                            value={customerEmail}
+                            value={email}
                         />
                     </div>
                     <div className={cx("d-flex", "form-flex")}>
                         <div className={cx("form-item", "item-2")}>
                             <InputForm
                                 label="Phone"
-                                name="customerPhone"
+                                name="phone"
                                 onChange={(e) => handleEventChange(e)}
                                 placeholder="Phone"
                                 type="text"
-                                value={customerPhone}
+                                value={phone}
                             />
                         </div>
                         <div className={cx("form-item")}>
@@ -275,21 +288,21 @@ function BookingModal() {
                         <div className={cx("form-item", "item-2")}>
                             <InputForm
                                 label="Date"
-                                name="bookingDate"
+                                name="date"
                                 onChange={(e) => handleEventChange(e)}
                                 placeholder=""
                                 type="date"
-                                value={bookingDate}
+                                value={date}
                             />
                         </div>
                         <div className={cx("form-item")}>
                             <InputForm
                                 label="Time"
-                                name="bookingTime"
+                                name="time"
                                 onChange={(e) => handleEventChange(e)}
                                 placeholder=""
                                 type="time"
-                                value={bookingTime}
+                                value={time}
                             />
                         </div>
                     </div>
@@ -326,17 +339,11 @@ function BookingModal() {
                                 onChange={(e) => handleEventChange(e)}
                                 value={tableId}
                             >
-                                {tableFilter.length
-                                    ? tableFilter.map((table, index) => (
-                                          <option value={table.id} key={index}>
-                                              {`${table.table_title} - ${table.table_size} people`}
-                                          </option>
-                                      ))
-                                    : tables.map((table, index) => (
-                                          <option value={table.id} key={index}>
-                                              {`${table.table_title} - ${table.table_size} people`}
-                                          </option>
-                                      ))}
+                                {tableFilter.map((table, index) => (
+                                    <option value={table.id} key={index}>
+                                        {`${table.table_title} - ${table.table_size} people`}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>

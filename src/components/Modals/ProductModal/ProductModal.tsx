@@ -12,9 +12,10 @@ import * as globalInterface from "../../../types";
 import * as selectorState from "../../../redux/selector";
 
 import { createProduct, updateProduct } from "../../../services/productService";
-import { reloadFunc } from "../../../redux/slice/globalSlice";
+import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { axiosCreateJWT } from "../../../util/jwtRequest";
 import { loginSuccess } from "../../../redux/slice/authSlice";
+import CheckboxCustom from "../../CheckboxCustom/CheckboxCustom";
 
 const cx = classNames.bind(styles);
 
@@ -36,8 +37,8 @@ function CategoryModal() {
 
     const [product, setProduct] =
         useState<globalInterface.Product<File | null>>(productInit);
-    const [categorys, setCategorys] = useState<
-        globalInterface.Category<File | null>[]
+    const [categoryData, setCategoryData] = useState<
+        globalInterface.Category<string | null>[]
     >([]);
 
     const productDetail = useSelector(selectorState.selectProductDetail);
@@ -75,7 +76,7 @@ function CategoryModal() {
     const create = async (): Promise<void> => {
         try {
             addProductFormData();
-            await createProduct(
+            const res = await createProduct(
                 {
                     headers: {
                         token: currentAccount?.token,
@@ -91,6 +92,7 @@ function CategoryModal() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             setProduct(productInit);
         } catch (err) {
             console.log(err);
@@ -100,7 +102,7 @@ function CategoryModal() {
     const update = async (): Promise<void> => {
         try {
             addProductFormData();
-            await updateProduct(
+            const res = await updateProduct(
                 {
                     headers: {
                         token: currentAccount?.token,
@@ -117,6 +119,7 @@ function CategoryModal() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
         } catch (err) {
             console.log(err);
         }
@@ -125,17 +128,8 @@ function CategoryModal() {
     //Get category
     const getCategory: AsyncFunction<void> = async (): Promise<void> => {
         try {
-            const res = await categoryService.getAll({
-                headers: {
-                    token: currentAccount?.token,
-                },
-                axiosJWT: axiosCreateJWT(
-                    currentAccount,
-                    dispatch,
-                    loginSuccess
-                ),
-            });
-            setCategorys(res.data);
+            const res = await categoryService.getAll();
+            setCategoryData(res.data);
         } catch (err) {
             console.log(err);
         }
@@ -183,7 +177,13 @@ function CategoryModal() {
                 material: productDetail.material,
                 description: productDetail.description,
                 image: productDetail.image,
-                categories: [],
+                categories:
+                    productDetail.category.length > 0
+                        ? productDetail.category.map(
+                              (item: globalInterface.Category<string>) =>
+                                  item.id
+                          )
+                        : [],
             });
         }
     }, [productDetail]);
@@ -257,47 +257,23 @@ function CategoryModal() {
                             Category group
                         </label>
                         <div className={cx("row g-0", "category-group")}>
-                            {categorys.length > 0 &&
-                                categorys.map((category, index) => (
-                                    <div
-                                        className={cx(
-                                            "col-3 d-flex justify-content-center align-items-center",
-                                            "category-item"
-                                        )}
+                            {categoryData.length > 0 &&
+                                categoryData.map((category, index) => (
+                                    <CheckboxCustom
                                         key={index}
-                                    >
-                                        <label
-                                            className={cx("label")}
-                                            htmlFor=""
-                                        >
-                                            {category.name}
-                                        </label>
-
-                                        <div className={cx("checkbox-1")}>
-                                            <input
-                                                type="checkbox"
-                                                className={cx("order-ckb")}
-                                                id={category.name}
-                                                value={category.id || ""}
-                                                onChange={(e) =>
-                                                    handleCheckboxClick(e)
-                                                }
-                                            />
-                                            <label
-                                                htmlFor={category.name}
-                                                className={cx(
-                                                    "order-ckb-label",
-                                                    {
-                                                        active: categories?.find(
-                                                            (item: any) =>
-                                                                item ===
-                                                                category.id
-                                                        ),
-                                                    }
-                                                )}
-                                            />
-                                        </div>
-                                    </div>
+                                        className={cx("col-3")}
+                                        id={category?.id || "id"}
+                                        value={category?.id || "id"}
+                                        onChange={(e) => handleCheckboxClick(e)}
+                                        label={category.name}
+                                        checked={
+                                            categories.find(
+                                                (item) => item === category.id
+                                            )
+                                                ? true
+                                                : false
+                                        }
+                                    />
                                 ))}
                         </div>
                     </div>

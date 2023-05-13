@@ -28,7 +28,6 @@ function Sidebar({ className }: SidebarProps) {
 
     const handleLogout = async () => {
         dispatch(logOutStart());
-        console.log(currentAccount?.token);
         try {
             await authService.logout({
                 headers: {

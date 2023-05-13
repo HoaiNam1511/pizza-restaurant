@@ -12,7 +12,7 @@ import * as globalInterface from "../../../types";
 import * as authServices from "../../../services/authService";
 import * as accountServices from "../../../services/accountService";
 import { axiosCreateJWT } from "../../../util/jwtRequest";
-import { reloadFunc } from "../../../redux/slice/globalSlice";
+import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const accountInit: globalInterface.AccountState = {
@@ -48,7 +48,7 @@ function AccountModal() {
     //Create account
     const create = async (): Promise<void> => {
         try {
-            await accountServices.create(
+            const res: globalInterface.Toast = await accountServices.create(
                 {
                     headers: {
                         token: currentAccount?.token,
@@ -62,6 +62,7 @@ function AccountModal() {
                 { account }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             setAccount(accountInit);
         } catch (err) {
             console.log(err);
@@ -71,7 +72,7 @@ function AccountModal() {
     //Update account
     const update = async (): Promise<void> => {
         try {
-            await accountServices.update(
+            const res = await accountServices.update(
                 {
                     headers: {
                         token: currentAccount?.token,
@@ -88,6 +89,7 @@ function AccountModal() {
                 }
             );
             dispatch(reloadFunc());
+            dispatch(setToast(res));
             setAccount(accountInit);
         } catch (err) {
             console.log(err);

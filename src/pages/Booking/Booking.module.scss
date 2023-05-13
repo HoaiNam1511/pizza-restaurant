@@ -2,27 +2,27 @@
 @import "../../scss/mixin";
 
 .wrapper {
-    .booking {
+    .content {
         min-height: calc(100vh - 150px);
         background-color: #ffffff;
         border-radius: 6px;
         margin-top: 20px;
-    }
 
-    .booking-header {
-        padding: 10px 15px 0px;
-    }
+        .content-header {
+            padding: 10px 15px 0px;
+        }
 
-    .booking-header_title {
-    }
+        .content-header_title {
+        }
 
-    .booking-header_btn {
-        @include primary-btn;
-    }
+        .content-header_btn {
+            @include primary-btn;
+        }
 
-    .booking-header_btn--outline {
-        @include primary-btn_outline;
-        margin-left: 10px;
+        .content-header_btn--outline {
+            @include primary-btn_outline;
+            margin-left: 10px;
+        }
     }
 
     //Table

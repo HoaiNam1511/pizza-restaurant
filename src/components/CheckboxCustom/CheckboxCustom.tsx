@@ -3,38 +3,48 @@ import classNames from "classnames/bind";
 
 const cx = classNames.bind(styles);
 interface CheckboxCustomProps {
-    id: string;
-    value: string;
+    id: string | number;
+    value: string | number;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     labelRight?: boolean;
+    className?: string;
+    label?: string;
+    checked?: boolean;
 }
 function CheckboxCustom({
     id,
     value,
     onChange,
     labelRight = false,
+    className,
+    label,
+    checked,
 }: CheckboxCustomProps) {
     return (
-        <div className={cx("checkbox-item")}>
+        <div className={cx("checkbox-item", className)}>
             {!labelRight && (
                 <label className={cx("label")} htmlFor="">
-                    Show password
+                    {label}
                 </label>
             )}
 
-            <div className={cx("checkbox-1")}>
+            <div className={cx("checkbox-container")}>
                 <input
+                    id={id as string}
                     type="checkbox"
-                    className={cx("order-ckb")}
-                    id={id}
+                    className={cx("checkbox")}
                     value={value}
                     onChange={onChange}
+                    checked={checked}
                 />
-                <label htmlFor={id} className={cx("order-ckb-label")} />
+                <label
+                    htmlFor={id as string}
+                    className={cx("checkbox-custom")}
+                />
             </div>
             {labelRight && (
                 <label className={cx("label")} htmlFor="">
-                    Show password
+                    {label}
                 </label>
             )}
         </div>

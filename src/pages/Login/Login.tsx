@@ -14,6 +14,7 @@ import {
     setInfoAccountReset,
 } from "../../redux/slice/authSlice";
 import config from "../../config";
+import CheckboxCustom from "../../components/CheckboxCustom/CheckboxCustom";
 const cx = classNames.bind(styles);
 
 function Login() {
@@ -21,6 +22,7 @@ function Login() {
     const navigate = useNavigate();
     const [message, setMessage] = useState<string>();
     const [form, setForm] = useState<number>(0);
+    const [showPassword, setShowPassword] = useState<string>("password");
     const [account, setAccount] = useState<globalInterface.Account>({
         username: "",
         password: "",
@@ -48,7 +50,6 @@ function Login() {
     const handleForgotPassword = async () => {
         try {
             const result = await authService.forgot(emailObj);
-            console.log(result);
             if (result.message) {
                 setMessage(result.message);
             } else {
@@ -109,16 +110,31 @@ function Login() {
                             placeholder="Password"
                             name="password"
                             value={password}
-                            type="password"
+                            type={showPassword}
                             onChange={(e) => onInputChange(e)}
                             onKeyDown={handleKeyDown}
                         ></input>
-                        <p
-                            className={cx("forgot-password")}
-                            onClick={handleChangeForm}
-                        >
-                            Forgot your password?
-                        </p>
+
+                        <div className={cx("form-input-flex")}>
+                            <CheckboxCustom
+                                id="showPass"
+                                onChange={(e) =>
+                                    setShowPassword((pre) =>
+                                        pre === "password" ? "text" : "password"
+                                    )
+                                }
+                                value=""
+                                labelRight
+                                label="Show password"
+                            />
+                            <p
+                                className={cx("forgot-password")}
+                                onClick={handleChangeForm}
+                            >
+                                Forgot your password?
+                            </p>
+                        </div>
+
                         <p className={cx("error-message")}>{message}</p>
                         <button
                             type="button"

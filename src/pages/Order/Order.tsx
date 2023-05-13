@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames/bind";
+import moment from "moment";
 
 import OrderModal from "../../components/Modals/OrderModal/OrderModal";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
@@ -14,7 +15,12 @@ import * as selectorState from "../../redux/selector";
 import { orderStatusData, paymentStatusData, columnTable } from "../../data";
 import { ActionButton } from "../../components/Buttons";
 import { setOrderDetail } from "../../redux/slice/orderSlice";
-import { openModal, addPageCount } from "../../redux/slice/globalSlice";
+import {
+    openModal,
+    addPageCount,
+    setToast,
+    reloadFunc,
+} from "../../redux/slice/globalSlice";
 import { axiosCreateJWT } from "../../util/jwtRequest";
 import { loginSuccess } from "../../redux/slice/authSlice";
 const cx = classNames.bind(styles);
@@ -61,23 +67,26 @@ function Order() {
     };
 
     const updateOrderStatus = async () => {
-        await orderService.updateOrder(
-            {
-                axiosJWT: axiosCreateJWT(
-                    currentAccount,
-                    dispatch,
-                    loginSuccess
-                ),
-                headers: {
-                    token: currentAccount?.token,
+        if (orderStatus.orderStatus) {
+            const res = await orderService.updateOrder(
+                {
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                    headers: {
+                        token: currentAccount?.token,
+                    },
                 },
-            },
-            {
-                id: orderStatus.id,
-                order: orderStatus,
-            }
-        );
-        getOrder({});
+                {
+                    id: orderStatus.id,
+                    order: orderStatus,
+                }
+            );
+            dispatch(reloadFunc());
+            dispatch(setToast(res));
+        }
     };
 
     //Show detail order
@@ -173,12 +182,16 @@ function Order() {
                             <tbody key={index}>
                                 <tr className={cx("row g-0")}>
                                     <th scope="row" className={cx("col-2")}>
-                                        {order.order_code}
+                                        {order.order_code.toUpperCase()}
                                     </th>
 
                                     <td className={cx("col-2")}>
-                                        {order.order_date}
+                                        {moment(
+                                            order.order_date,
+                                            "YYYY-MM-DD"
+                                        ).format("DD/MM/YYYY")}
                                     </td>
+
                                     <td className={cx("col-1")}>
                                         {order.products.length}
                                     </td>

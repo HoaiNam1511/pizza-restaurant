@@ -15,6 +15,7 @@ import {
     modalCreate,
     reloadFunc,
     openModal,
+    setToast,
 } from "../../redux/slice/globalSlice";
 import {
     selectReload,
@@ -76,7 +77,7 @@ function Product() {
 
     //Handle update
     const handleDeleteProduct = async (id: number): Promise<void> => {
-        await productService.deleteProduct(
+        const res = await productService.deleteProduct(
             {
                 axiosJWT: axiosCreateJWT(
                     currentAccount,
@@ -90,6 +91,7 @@ function Product() {
             { id: id }
         );
         dispatch(reloadFunc());
+        dispatch(setToast(res));
     };
 
     //Sort

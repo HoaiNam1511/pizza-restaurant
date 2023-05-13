@@ -1,0 +1,68 @@
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+@import "../../scss/mixin";
+
+.card {
+    background-image: $primary-liner-color;
+    height: 180px;
+    width: 280px;
+    position: relative;
+    border-radius: 4px;
+    padding: 25px;
+    @mixin circle {
+        position: absolute;
+        content: "";
+        height: 140px;
+        width: 140px;
+        border-radius: 50%;
+        background-color: rgb(255, 255, 255);
+        opacity: 0.2;
+    }
+
+    &::before {
+        @include circle;
+        transform: translate(45%, -30%);
+        right: 0;
+    }
+
+    &::after {
+        @include circle;
+        transform: translate(10%, 40%);
+        right: 0;
+        bottom: 0;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        h3 {
+            color: #fff;
+            font-size: 1.6rem;
+            font-size: 400;
+            text-transform: capitalize;
+        }
+
+        svg {
+            color: #fff;
+            font-size: 2rem;
+        }
+    }
+
+    .main-title {
+        h2 {
+            color: #fff;
+            text-align: start;
+            padding: 15px 0px 20px;
+            font-size: 2.8rem;
+        }
+    }
+
+    .footer-title {
+        h4 {
+            text-align: start;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 300;
+        }
+    }
+}

@@ -1,10 +1,8 @@
 import * as globalInterface from "../types";
+import { httpRequestCategory } from "../util/httpRequest";
 
-export const getAll = async ({
-    headers,
-    axiosJWT,
-}: globalInterface.ServiceParams) => {
-    const res = await axiosJWT.get(`/category/get`, { headers });
+export const getAll = async () => {
+    const res = await httpRequestCategory.get(`/get`);
     return res.data;
 };
 
@@ -15,7 +13,7 @@ export const get = async ({
     headers,
     axiosJWT,
 }: globalInterface.ServiceParams) => {
-    const res = await axiosJWT.get(`/category/get?page=${page}`, { headers });
+    const res = await httpRequestCategory.get(`/get?page=${page}`);
     return res.data;
 };
 
