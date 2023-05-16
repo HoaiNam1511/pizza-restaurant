@@ -3,10 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as globalInterface from "../../types";
 interface OrderState {
     orderDetail: globalInterface.Order | null;
+    orderWeek: globalInterface.ChartData[];
+    reloadChart: boolean;
 }
 
 const orderInitial: OrderState = {
     orderDetail: null,
+    orderWeek: [],
+    reloadChart: false,
 };
 
 const orderSlice = createSlice({
@@ -19,8 +23,22 @@ const orderSlice = createSlice({
         ) => {
             state.orderDetail = action.payload;
         },
+
+        setOrderWeek: (
+            state: OrderState,
+            action: PayloadAction<globalInterface.ChartData[]>
+        ) => {
+            if (state.orderWeek.length === 0) {
+                state.orderWeek.push(...action.payload);
+            }
+        },
+
+        setReloadChart: (state: OrderState) => {
+            state.reloadChart = !state.reloadChart;
+        },
     },
 });
 
-export const { setOrderDetail } = orderSlice.actions;
+export const { setOrderDetail, setOrderWeek, setReloadChart } =
+    orderSlice.actions;
 export default orderSlice.reducer;

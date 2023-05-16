@@ -21,6 +21,10 @@ export const selectCategoryDetail = (state: RootState) =>
 //Select order
 export const selectOrderDetail = (state: RootState) =>
     state.orderReducer.orderDetail;
+export const selectOrderWeek = (state: RootState) =>
+    state.orderReducer.orderWeek;
+export const selectReloadChart = (state: RootState) =>
+    state.orderReducer.reloadChart;
 //Select booking
 export const selectBookingDetail = (state: RootState) =>
     state.bookingReducer.categoryDetail;

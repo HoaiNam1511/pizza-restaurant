@@ -131,7 +131,7 @@ export interface Table {
     id: number;
     table_title: string;
     table_size: string;
-    table_used: string;
+    table_used: boolean;
 }
 
 export interface Booking {
@@ -197,16 +197,38 @@ export interface PasswordResetInfo {
     username: string;
     email: string;
 }
-
 export interface Toast {
     message: string;
     action: string;
 }
-
 export interface CardData {
     Icon: any;
     titleHeader: string;
     mainTitle: string | number;
     footerTitle: string;
     cardColor: string;
+}
+
+export interface OrderWeekResult {
+    orderQuantity: number;
+    subTotal: number;
+    productSale: number;
+}
+
+export interface OrderWeekProduct {
+    price: number;
+    quantity: number;
+}
+
+export interface BookingWeek {
+    id: number;
+    date: string;
+}
+
+export interface OrderWeek extends BookingWeek {
+    products: OrderWeekProduct[];
+}
+export interface ChartData {
+    date: string;
+    quantity: number;
 }

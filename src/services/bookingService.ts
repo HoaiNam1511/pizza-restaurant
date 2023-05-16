@@ -45,3 +45,11 @@ export const update = async (
     });
     return res.data;
 };
+
+export const bookingWeek = async ({
+    headers,
+    axiosJWT,
+}: globalInterface.ServiceParams) => {
+    const res = await axiosJWT.get("/booking/booking-week", { headers });
+    return res.data;
+};

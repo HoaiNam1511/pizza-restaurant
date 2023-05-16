@@ -23,3 +23,17 @@ export const updateOrder = async (
     });
     return result.data;
 };
+
+export const getOrderOfWeek = async ({
+    axiosJWT,
+    headers,
+}: globalInterface.ServiceParams) => {
+    const result = await axiosJWT.get(
+        "/order/order-weeks",
+        {},
+        {
+            headers,
+        }
+    );
+    return result.data;
+};

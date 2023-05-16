@@ -37,8 +37,9 @@ export interface OrderUpdate {
 function Order() {
     const dispatch = useDispatch();
     const pageChange = useSelector(selectorState.selectCurrentPage);
-    const [orders, setOrders] = useState<globalInterface.Order[]>([]);
     const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const reload = useSelector(selectorState.selectReload);
+    const [orders, setOrders] = useState<globalInterface.Order[]>([]);
     const [orderStatus, setOrderStatus] = useState<globalInterface.OrderStatus>(
         {
             id: null,
@@ -136,7 +137,7 @@ function Order() {
             orderBy: "DESC",
             sortBy: "id",
         });
-    }, [pageChange]);
+    }, [pageChange, reload]);
 
     useEffect(() => {
         updateOrderStatus();
