@@ -13,7 +13,9 @@ export const get = async ({
     headers,
     axiosJWT,
 }: globalInterface.ServiceParams) => {
-    const res = await httpRequestCategory.get(`/get?page=${page}`);
+    const res = await httpRequestCategory.get(
+        `/get?page=${page}&orderBy=${orderBy}&sortBy=${sortBy}`
+    );
     return res.data;
 };
 

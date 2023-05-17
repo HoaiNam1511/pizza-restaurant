@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ function Login() {
     const { email } = emailObj;
     const { username, password } = account;
 
-    const handleLogin = async () => {
+    const handleLogin = async (): Promise<void> => {
         if (String(account.password).length >= 8) {
             dispatch(loginStart());
             try {
@@ -51,7 +51,7 @@ function Login() {
         }
     };
 
-    const handleForgotPassword = async () => {
+    const handleForgotPassword = async (): Promise<void> => {
         try {
             const result = await authService.forgot(emailObj);
             if (result.message) {
@@ -71,7 +71,9 @@ function Login() {
         }
     };
 
-    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
         if (event.target.name !== "email") {
             setAccount({ ...account, [event.target.name]: event.target.value });
 
@@ -83,17 +85,11 @@ function Login() {
         }
     };
 
-    const handleChangeForm = () => {
-        if (form === 0) {
-            setForm(1);
-        } else {
-            setForm(0);
-        }
-
+    useEffect(() => {
         if (message) {
             setMessage("");
         }
-    };
+    }, [form]);
 
     return (
         <div className={cx("wrapper")}>
@@ -133,7 +129,9 @@ function Login() {
                             />
                             <p
                                 className={cx("forgot-password")}
-                                onClick={handleChangeForm}
+                                onClick={() =>
+                                    setForm((pre) => (pre !== 0 ? 0 : 1))
+                                }
                             >
                                 Forgot your password?
                             </p>
@@ -161,7 +159,9 @@ function Login() {
                         ></input>
                         <p
                             className={cx("forgot-password")}
-                            onClick={handleChangeForm}
+                            onClick={() =>
+                                setForm((pre) => (pre === 1 ? 0 : 1))
+                            }
                         >
                             Back to login
                         </p>

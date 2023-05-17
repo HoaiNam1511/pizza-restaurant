@@ -36,14 +36,20 @@ function CategoryModal() {
     const dispatch = useDispatch();
 
     const [product, setProduct] =
-        useState<globalInterface.Product<File | null>>(productInit);
+        useState<globalInterface.Product<File | string | null>>(productInit);
     const [categoryData, setCategoryData] = useState<
         globalInterface.Category<string | null>[]
     >([]);
 
-    const productDetail = useSelector(selectorState.selectProductDetail);
-    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const productDetail: globalInterface.Product<string> | null = useSelector(
+        selectorState.selectProductDetail
+    );
+    const modalTitle: string = useSelector(
+        selectorState.selectModalTitleStatus
+    );
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     const { id, name, price, material, description, image, categories } =
         product;
@@ -114,7 +120,7 @@ function CategoryModal() {
                     ),
                 },
                 {
-                    id: productDetail.id,
+                    id: productDetail?.id as number,
                     product: productData,
                 }
             );
@@ -178,8 +184,8 @@ function CategoryModal() {
                 description: productDetail.description,
                 image: productDetail.image,
                 categories:
-                    productDetail.category.length > 0
-                        ? productDetail.category.map(
+                    productDetail.categories.length > 0
+                        ? productDetail.categories.map(
                               (item: globalInterface.Category<string>) =>
                                   item.id
                           )

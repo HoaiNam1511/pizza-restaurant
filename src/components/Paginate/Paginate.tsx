@@ -11,7 +11,7 @@ interface PaginateProps {
 
 function Paginate({ pageCount, onClick }: PaginateProps) {
     //Handle change page
-    const handlePageClick = (event: any) => {
+    const handlePageClick = (event: any): void => {
         onClick(event.selected + 1);
     };
 

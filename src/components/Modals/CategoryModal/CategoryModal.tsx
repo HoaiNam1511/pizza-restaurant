@@ -22,12 +22,18 @@ function CategoryModal() {
     let formData: any = new FormData();
     const dispatch = useDispatch();
     const [category, setCategory] =
-        useState<globalInterface.Category<File | null>>(categoryInit);
+        useState<globalInterface.Category<File | string | null>>(categoryInit);
     const { id, name, image } = category;
 
-    const categoryDetail = useSelector(selectorState.selectCategoryDetail);
-    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const categoryDetail: globalInterface.Category<string | null> = useSelector(
+        selectorState.selectCategoryDetail
+    );
+    const modalTitle: string = useSelector(
+        selectorState.selectModalTitleStatus
+    );
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     const handleUploadFile = (event: any): void => {
         setCategory({ ...category, image: event.target.files?.[0] });
@@ -46,7 +52,7 @@ function CategoryModal() {
         formData.append("image", image);
     };
 
-    //Api
+    //Api: create category
     const create = async (): Promise<void> => {
         try {
             addFormData();
@@ -73,6 +79,7 @@ function CategoryModal() {
         }
     };
 
+    //Api: update category
     const update = async (): Promise<void> => {
         try {
             addFormData();
@@ -89,7 +96,7 @@ function CategoryModal() {
                 },
                 {
                     category: formData,
-                    id: categoryDetail.id,
+                    id: categoryDetail.id || 0,
                 }
             );
             dispatch(reloadFunc());

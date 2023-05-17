@@ -36,12 +36,14 @@ export interface AsyncFunction<T> {
 
 function Category() {
     const dispatch = useDispatch();
-    const reload = useSelector(selectorState.selectReload);
-    const pageChange = useSelector(selectorState.selectCurrentPage);
+    const reload: boolean = useSelector(selectorState.selectReload);
+    const pageChange: number = useSelector(selectorState.selectCurrentPage);
     const [categories, setCategories] = useState<
         globalInterface.Category<string>[]
     >([]);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     //Api
     const getAllCategory = async (): Promise<void> => {

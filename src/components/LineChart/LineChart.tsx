@@ -1,21 +1,17 @@
-import {
-    Chart as ChartJS,
-    BarController,
-    BarElement,
-    ChartData,
-} from "chart.js";
-import { useEffect, useRef } from "react";
-import * as orderService from "../../services/orderService";
-import * as bookingService from "../../services/bookingService";
-import { useSelector, useDispatch } from "react-redux";
-import * as selectorState from "../../redux/selector";
-import { axiosCreateJWT } from "../../util/jwtRequest";
-import { loginSuccess } from "../../redux/slice/authSlice";
-import * as globalInterface from "../../types";
-import { useState } from "react";
 import moment from "moment";
 import Chart from "chart.js/auto";
-import { setOrderWeek, setReloadChart } from "../../redux/slice/orderSlice";
+import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Chart as ChartJS, BarController, BarElement } from "chart.js";
+
+import * as orderService from "../../services/orderService";
+import * as bookingService from "../../services/bookingService";
+import * as selectorState from "../../redux/selector";
+import * as globalInterface from "../../types";
+
+import { axiosCreateJWT } from "../../util/jwtRequest";
+import { loginSuccess } from "../../redux/slice/authSlice";
+import { setOrderWeek } from "../../redux/slice/orderSlice";
 
 ChartJS.register(BarController, BarElement);
 
@@ -32,6 +28,7 @@ function LineChart() {
     >([]);
     const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
+    //Handle total product order 7 days
     const handleTotalProductOrder = (
         data: globalInterface.OrderWeek[]
     ): globalInterface.ChartData[] => {
@@ -50,11 +47,14 @@ function LineChart() {
         return result;
     };
 
+    //Remove duplicate date from data
     const handleRemoveDuplicate = (
         data: globalInterface.ChartData[]
     ): globalInterface.ChartData[] => {
         let dateArray: globalInterface.ChartData[] = [];
-        const today = new Date();
+
+        //Create new label and quantity for chart
+        const today: Date = new Date();
         for (let i = 0; i < 7; i++) {
             let startOfWeek: any | string = new Date(
                 today.getFullYear(),
@@ -68,29 +68,33 @@ function LineChart() {
             });
         }
 
-        data.map((item: globalInterface.ChartData) => {
+        //Handle total quantity for chart
+        data.forEach((item: globalInterface.ChartData) => {
             const index = dateArray.findIndex(
                 (item1: globalInterface.ChartData) => item1.date === item.date
             );
             if (index >= 0) {
                 dateArray[index].quantity += 1;
             }
-            return [];
         });
         return dateArray;
     };
 
+    //Handle total max chart scale Y
     const handleChartScaleMax = (data: globalInterface.ChartData[]): void => {
-        const maxQuantity = data.reduce(
+        const maxQuantity: number = data.reduce(
             (max: number, item: globalInterface.ChartData) => {
                 return item.quantity > max ? item.quantity : max;
             },
             0
         );
-        const roundedNumber = Math.ceil(maxQuantity / 10) * 10;
-        setChartScaleMax((pre) => (pre < roundedNumber ? roundedNumber : pre));
+        const roundedNumber: number = Math.ceil(maxQuantity / 10) * 10;
+        setChartScaleMax((pre: number) =>
+            pre < roundedNumber ? roundedNumber : pre
+        );
     };
 
+    //Api: get order week
     const getOrderOfWeek = async (): Promise<void> => {
         const res: globalInterface.OrderWeek[] =
             await orderService.getOrderOfWeek({
@@ -105,15 +109,17 @@ function LineChart() {
             });
 
         handleTotalProductOrder(res);
-        const result = handleTotalProductOrder(res);
+        const result: globalInterface.ChartData[] =
+            handleTotalProductOrder(res);
         dispatch(setOrderWeek(result));
-        dispatch(setReloadChart());
-        const filterDuplicateDate = handleRemoveDuplicate(result);
+        const filterDuplicateDate: globalInterface.ChartData[] =
+            handleRemoveDuplicate(result);
         setCharOrderData(filterDuplicateDate);
-        handleChartScaleMax(result);
+        handleChartScaleMax(filterDuplicateDate);
     };
 
-    const getBookingOfWeek = async () => {
+    //Api: get booking week
+    const getBookingOfWeek = async (): Promise<void> => {
         const res: globalInterface.BookingWeek[] =
             await bookingService.bookingWeek({
                 axiosJWT: axiosCreateJWT(
@@ -125,8 +131,8 @@ function LineChart() {
                     token: currentAccount?.token,
                 },
             });
-
-        const result = res.map((item) => {
+        //Convert data booking to chart data type
+        const result: globalInterface.ChartData[] = res.map((item) => {
             return {
                 date: item.date,
                 quantity: 0,
@@ -135,7 +141,7 @@ function LineChart() {
 
         const filterDuplicateDate = handleRemoveDuplicate(result);
         setChartBookingData(filterDuplicateDate);
-        handleChartScaleMax(result);
+        handleChartScaleMax(filterDuplicateDate);
     };
 
     useEffect(() => {

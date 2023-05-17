@@ -35,11 +35,13 @@ function Home() {
     );
     const [tableData, setTableData] = useState<globalInterface.Table[]>();
     const [mostAvailableTable, setMostAvailableTable] = useState<number>(0);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     //Api
     //Get order of week
-    const getOrderOfWeek = async () => {
+    const getOrderOfWeek = async (): Promise<void> => {
         const res = await orderService.getOrderOfWeek({
             axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
             headers: {
@@ -72,7 +74,7 @@ function Home() {
     };
 
     //Get quantity of table
-    const getTable = async () => {
+    const getTable = async (): Promise<void> => {
         const res = await bookingService.getAllTable({
             axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
             headers: {
@@ -84,7 +86,7 @@ function Home() {
     };
 
     //Handle get most table available
-    const handleMostAvailable = (tables: globalInterface.Table[]) => {
+    const handleMostAvailable = (tables: globalInterface.Table[]): void => {
         let maxValue: number = 0;
         const tableCounts: globalInterface.Table = tables?.reduce(
             (counts: any, table: globalInterface.Table) => {

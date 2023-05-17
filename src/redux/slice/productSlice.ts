@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as globalInterface from "../../types";
 export interface ProductState {
-    productDetail: any;
+    productDetail: globalInterface.Product<string> | null;
 }
 
 const initialState: ProductState = {
-    productDetail: {},
+    productDetail: null,
 };
 
 export const productSlice = createSlice({

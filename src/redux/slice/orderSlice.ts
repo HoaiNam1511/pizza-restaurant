@@ -32,13 +32,8 @@ const orderSlice = createSlice({
                 state.orderWeek.push(...action.payload);
             }
         },
-
-        setReloadChart: (state: OrderState) => {
-            state.reloadChart = !state.reloadChart;
-        },
     },
 });
 
-export const { setOrderDetail, setOrderWeek, setReloadChart } =
-    orderSlice.actions;
+export const { setOrderDetail, setOrderWeek } = orderSlice.actions;
 export default orderSlice.reducer;

@@ -11,6 +11,7 @@ import * as selectorState from "../../../redux/selector";
 import * as globalInterface from "../../../types";
 import * as authServices from "../../../services/authService";
 import * as accountServices from "../../../services/accountService";
+
 import { axiosCreateJWT } from "../../../util/jwtRequest";
 import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { loginSuccess } from "../../../redux/slice/authSlice";
@@ -33,9 +34,16 @@ function AccountModal() {
     const [roles, setRoles] = useState<globalInterface.Role[]>([]);
     const { email, username, password, status, role } = account;
 
-    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
-    const accountUpdate = useSelector(selectorState.selectAccountDetail);
+    const modalTitle: string = useSelector(
+        selectorState.selectModalTitleStatus
+    );
+
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
+    const accountUpdate: globalInterface.AccountData | null = useSelector(
+        selectorState.selectAccountDetail
+    );
     //Handle when input change
     const handleInputChange = (
         event:
@@ -44,8 +52,8 @@ function AccountModal() {
     ): void => {
         setAccount({ ...account, [event.target.name]: event.target.value });
     };
-    //Api
-    //Create account
+
+    //Api: create account
     const create = async (): Promise<void> => {
         try {
             const res: globalInterface.Toast = await accountServices.create(
@@ -69,7 +77,7 @@ function AccountModal() {
         }
     };
 
-    //Update account
+    //Api: update account
     const update = async (): Promise<void> => {
         try {
             const res = await accountServices.update(
@@ -97,7 +105,7 @@ function AccountModal() {
         }
     };
 
-    //Get roles
+    //Api: get role
     const getRole = async () => {
         try {
             const response = await authServices.role({

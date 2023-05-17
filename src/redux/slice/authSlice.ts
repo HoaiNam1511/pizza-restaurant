@@ -1,27 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as globalInterface from "../../types";
 
-interface Account {
-    id: number;
-    email: string;
-    username: string;
-    status: number;
-}
-
-interface CurrentAccount {
-    account: Account;
-    action: string;
-    message: string;
-    token: string;
-}
-
 interface Logout {
     isFetching: boolean;
     error: boolean;
 }
 
 interface Login extends Logout {
-    currentAccount: CurrentAccount | null;
+    currentAccount: globalInterface.CurrentAccount | null;
 }
 
 interface AuthState {
@@ -51,7 +37,10 @@ export const authSlice = createSlice({
             state.login.isFetching = true;
         },
 
-        loginSuccess(state: AuthState, action: PayloadAction<CurrentAccount>) {
+        loginSuccess(
+            state: AuthState,
+            action: PayloadAction<globalInterface.CurrentAccount>
+        ) {
             state.login.isFetching = false;
             state.login.currentAccount = action.payload;
             state.login.error = false;
@@ -78,7 +67,7 @@ export const authSlice = createSlice({
         },
         setCurrentAccount: (
             state: AuthState,
-            action: PayloadAction<CurrentAccount>
+            action: PayloadAction<globalInterface.CurrentAccount>
         ) => {
             state.login.currentAccount = action.payload;
         },

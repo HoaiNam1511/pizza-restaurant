@@ -34,11 +34,14 @@ export interface OrderUpdate {
     id: number | null;
     order: globalInterface.OrderStatus;
 }
+const paymentCrash = "crash";
 function Order() {
     const dispatch = useDispatch();
-    const pageChange = useSelector(selectorState.selectCurrentPage);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
-    const reload = useSelector(selectorState.selectReload);
+    const pageChange: number = useSelector(selectorState.selectCurrentPage);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
+    const reload: boolean = useSelector(selectorState.selectReload);
     const [orders, setOrders] = useState<globalInterface.Order[]>([]);
     const [orderStatus, setOrderStatus] = useState<globalInterface.OrderStatus>(
         {
@@ -53,7 +56,7 @@ function Order() {
     const getOrder = async ({
         orderBy = "DESC",
         sortBy = "id",
-    }: globalInterface.Sort) => {
+    }: globalInterface.Sort): Promise<void> => {
         const response = await orderService.getAll({
             page: pageChange,
             sortBy,
@@ -67,7 +70,7 @@ function Order() {
         dispatch(addPageCount(response.totalPage));
     };
 
-    const updateOrderStatus = async () => {
+    const updateOrderStatus = async (): Promise<void> => {
         if (orderStatus.orderStatus) {
             const res = await orderService.updateOrder(
                 {
@@ -91,7 +94,7 @@ function Order() {
     };
 
     //Show detail order
-    const handleDetailOrder = (order: globalInterface.Order) => {
+    const handleDetailOrder = (order: globalInterface.Order): void => {
         dispatch(setOrderDetail(order));
         dispatch(openModal());
     };
@@ -110,13 +113,13 @@ function Order() {
             paymentStatus: orderItem.payment_status,
         });
 
-        if (paymentMethod !== "crash") {
+        if (paymentMethod !== paymentCrash) {
             setOrderStatus((pre) => ({
                 ...pre,
                 [event.target.name]: event.target.value,
             }));
         } else if (
-            paymentMethod === "crash" &&
+            paymentMethod === paymentCrash &&
             selectName.orderStatus === event.target.name
         ) {
             setOrderStatus((pre) => ({
@@ -129,7 +132,7 @@ function Order() {
     };
 
     //Handle sort
-    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort) => {
+    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort): void => {
         getOrder({ orderBy, sortBy });
     };
 

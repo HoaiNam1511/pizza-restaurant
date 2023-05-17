@@ -28,7 +28,9 @@ function ResetPassword() {
     const [message, setMessage] = useState<string>();
     const { password, confirmPassword } = newPassword;
 
-    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
         setNewPassword({
             ...newPassword,
             [event.target.name]: event.target.value,

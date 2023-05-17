@@ -16,35 +16,29 @@ import { addPageCount } from "../../redux/slice/globalSlice";
 const cx = classNames.bind(styles);
 function Table() {
     const dispatch = useDispatch();
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
     const [tables, setTable] = useState<globalInterface.Table[]>([]);
     const [status, setStatus] = useState<boolean | null>(null);
 
-    const getTable = async () => {
+    const getTable = async (): Promise<void> => {
         try {
-            let response;
+            let response: globalInterface.Table[];
+            const body = {
+                headers: { token: currentAccount?.token },
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+            };
             if (status === null) {
-                response = await bookingServices.getAllTable({
-                    headers: { token: currentAccount?.token },
-
-                    axiosJWT: axiosCreateJWT(
-                        currentAccount,
-                        dispatch,
-                        loginSuccess
-                    ),
-                });
+                response = await bookingServices.getAllTable(body);
             } else {
-                response = await bookingServices.getTable(
-                    {
-                        headers: { token: currentAccount?.token },
-                        axiosJWT: axiosCreateJWT(
-                            currentAccount,
-                            dispatch,
-                            loginSuccess
-                        ),
-                    },
-                    { used: status }
-                );
+                response = await bookingServices.getTable(body, {
+                    used: status,
+                });
             }
             setTable(response);
         } catch (err) {
@@ -52,7 +46,9 @@ function Table() {
         }
     };
 
-    const onselectionchange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const onselectionchange = (
+        event: React.ChangeEvent<HTMLSelectElement>
+    ): void => {
         if (event.target.value === "all") {
             setStatus(null);
         } else if (event.target.value === "used") {

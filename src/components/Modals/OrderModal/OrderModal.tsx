@@ -28,7 +28,7 @@ function OrderModal() {
     ];
 
     //Set product when click to table
-    const handleProductOnClick = (productArgument: any) => {
+    const handleProductOnClick = (productArgument: any): void => {
         const valuesArray = Object.values(productArgument);
         const newArr = productDetailList.map((item, index) => {
             if (index < 5) {
@@ -42,7 +42,7 @@ function OrderModal() {
     };
 
     //Handle total order
-    const handleTotalOrder = () => {
+    const handleTotalOrder = (): void => {
         const sum = orderDetail?.products.reduce(
             (acc, cur) => acc + cur.price * cur.order_details.quantity,
             0

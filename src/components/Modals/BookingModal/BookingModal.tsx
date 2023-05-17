@@ -168,6 +168,7 @@ function BookingModal() {
         setQuantityTable(result);
     };
 
+    //Get most table available
     const handleFilterTableAvailable = (size: number) => {
         const filterTable: globalInterface.Table[] = tables.filter(
             (table) =>

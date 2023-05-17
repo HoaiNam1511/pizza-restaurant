@@ -30,10 +30,11 @@ function User() {
     const dispatch = useDispatch();
 
     const [accounts, setAccounts] = useState<globalInterface.AccountData[]>([]);
-
-    const pageChange = useSelector(selectorState.selectCurrentPage);
-    const reload = useSelector(selectorState.selectReload);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const pageChange: number = useSelector(selectorState.selectCurrentPage);
+    const reload: boolean = useSelector(selectorState.selectReload);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     //Handle create booking
     const handleCreateBooking = (): void => {
@@ -41,10 +42,13 @@ function User() {
         dispatch(openModal());
     };
 
-    //Api
-    const getAccount = async ({ orderBy = "DESC", sortBy = "id" }) => {
+    //Api: get account
+    const getAccount = async ({
+        orderBy = "DESC",
+        sortBy = "id",
+    }): Promise<void> => {
         try {
-            let page = pageChange;
+            let page: number = pageChange;
             const res = await accountServices.get({
                 page,
                 orderBy,
@@ -63,7 +67,8 @@ function User() {
         }
     };
 
-    const handleDelete = async (id: number) => {
+    //Api: delete account
+    const handleDelete = async (id: number): Promise<void> => {
         try {
             const res = await accountServices.deleteAccount(
                 {

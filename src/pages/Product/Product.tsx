@@ -39,9 +39,10 @@ function Product() {
     const [products, setProducts] = useState<globalInterface.Product<string>[]>(
         []
     );
-    const reload = useSelector(selectReload);
-    const pageChange = useSelector(selectCurrentPage);
-    const currentAccount = useSelector(selectCurrentAccount);
+    const reload: boolean = useSelector(selectReload);
+    const pageChange: number = useSelector(selectCurrentPage);
+    const currentAccount: globalInterface.CurrentAccount | null =
+        useSelector(selectCurrentAccount);
 
     const getAllProduct = async ({
         sortBy = "id",
@@ -95,7 +96,7 @@ function Product() {
     };
 
     //Sort
-    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort) => {
+    const handleSort = ({ orderBy, sortBy }: globalInterface.Sort): void => {
         getAllProduct({ orderBy, sortBy });
     };
 

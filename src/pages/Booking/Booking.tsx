@@ -28,30 +28,19 @@ import { loginSuccess } from "../../redux/slice/authSlice";
 
 const cx = classNames.bind(styles);
 
-export interface BookingApi {
-    id: number;
-    customer_name: string;
-    customer_email: string;
-    customer_phone: number;
-    booking_date: any;
-    booking_time: any;
-    booking_status: string;
-    party_size: number;
-    note: string;
-    table_id: number;
-    table: globalInterface.Table;
-}
-
 function Booking() {
     const dispatch = useDispatch();
+
     const [listBooking, setListBooking] = useState<[]>([]);
     const [booking, setBooking] = useState<globalInterface.Booking | null>(
         null
     );
     const [filter, setFilter] = useState<string>("");
-    const pageChange = useSelector(selectorState.selectCurrentPage);
-    const reload = useSelector(selectorState.selectReload);
-    const currentAccount = useSelector(selectorState.selectCurrentAccount);
+    const pageChange: number = useSelector(selectorState.selectCurrentPage);
+    const reload: boolean = useSelector(selectorState.selectReload);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     //Handle create booking
     const handleCreateBooking = (): void => {
@@ -59,8 +48,11 @@ function Booking() {
         dispatch(openModal());
     };
 
-    //Api
-    const getBooking = async ({ orderBy = "DESC", sortBy = "id" }) => {
+    //Api: get booking
+    const getBooking = async ({
+        orderBy = "DESC",
+        sortBy = "id",
+    }): Promise<void> => {
         try {
             const res = await bookingService.get({
                 page: pageChange,
@@ -84,14 +76,15 @@ function Booking() {
         }
     };
 
-    const sortBooking = async ({ orderBy, sortBy }: globalInterface.Sort) => {
+    const sortBooking = ({ orderBy, sortBy }: globalInterface.Sort): void => {
         getBooking({ orderBy, sortBy });
     };
 
+    //Set
     const handleSelectChange = (
         event: React.ChangeEvent<HTMLSelectElement>,
-        booking: BookingApi
-    ) => {
+        booking: globalInterface.BookingData
+    ): any => {
         const newBooking = {
             id: booking.id,
             customerName: booking.customer_name,
@@ -105,11 +98,14 @@ function Booking() {
             tableId: booking.table_id,
         };
 
+        //If booking status not equal [done, cancel]
         if (!["done", "cancel"].includes(booking.booking_status)) {
+            //If value change is [done, cancel]
             if (["done", "cancel"].includes(event.target.value)) {
                 const answer = window.confirm(
                     `Are you sure? booking will be disable when status is ${event.target.value}`
                 );
+                //Notification
                 if (answer) {
                     setBooking(newBooking);
                 }
@@ -119,6 +115,7 @@ function Booking() {
         }
     };
 
+    //Api: update booking
     const updateBooking = async (): Promise<void> => {
         try {
             if (booking && booking.id !== undefined) {
@@ -147,7 +144,9 @@ function Booking() {
     };
 
     //Handle update
-    const handleUpdateBooking = (booking: globalInterface.BookingData) => {
+    const handleUpdateBooking = (
+        booking: globalInterface.BookingData
+    ): void => {
         dispatch(setBookingDetail(booking));
         dispatch(modalUpdate());
         dispatch(openModal());
@@ -188,26 +187,13 @@ function Booking() {
                                     item: globalInterface.OrderStatusData,
                                     index
                                 ) => (
-                                    <option value={item.value}>
+                                    <option value={item.value} key={index}>
                                         {item.title}
                                     </option>
                                 )
                             )}
                         </select>
-                        {/* <SelectAction
-                            className={cx("select")}
-                            data={[
-                                {
-                                    title: "All",
-                                    value: "",
-                                },
-                                ...bookingStatusData,
-                            ]}
-                            name="bookingStatus"
-                            onChange={(e) => setFilter(e.target.value)}
-                            currentStatus={filter}
-                            type={filter}
-                        /> */}
+
                         <button
                             onClick={handleCreateBooking}
                             type="button"
