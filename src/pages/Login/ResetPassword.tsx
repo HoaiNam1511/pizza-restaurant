@@ -42,25 +42,29 @@ function ResetPassword() {
     };
 
     const handleResetPassword = async () => {
-        if (password === confirmPassword) {
-            try {
-                const result = await authService.reset({
-                    username: setInfoAccountReset?.username as string,
-                    email: setInfoAccountReset?.email as string,
-                    newPassword: confirmPassword,
-                });
+        if (String(newPassword.password).length >= 8) {
+            if (password === confirmPassword) {
+                try {
+                    const result = await authService.reset({
+                        username: setInfoAccountReset?.username as string,
+                        email: setInfoAccountReset?.email as string,
+                        newPassword: confirmPassword,
+                    });
 
-                if (result.status) {
-                    setStatus(result.status);
-                    setMessage(result.message);
+                    if (result.status) {
+                        setStatus(result.status);
+                        setMessage(result.message);
+                    }
+                } catch (err) {
+                    console.log(err);
                 }
-            } catch (err) {
-                console.log(err);
+            } else {
+                setMessage(
+                    "The confirmed password does not match the original password. Please try again"
+                );
             }
         } else {
-            setMessage(
-                "The confirmed password does not match the original password. Please try again"
-            );
+            setMessage("Password require 8 character");
         }
     };
 

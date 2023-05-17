@@ -15,8 +15,17 @@
         .content-header_title {
         }
 
-        .content-header_btn {
-            @include primary-btn;
+        .right-block {
+            display: flex;
+
+            .select {
+                @include input-custom_1;
+                width: 125px;
+            }
+
+            .content-header_btn {
+                @include primary-btn;
+            }
         }
 
         .content-header_btn--outline {

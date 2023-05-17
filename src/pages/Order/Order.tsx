@@ -109,6 +109,7 @@ function Order() {
             orderStatus: orderItem.order_status,
             paymentStatus: orderItem.payment_status,
         });
+
         if (paymentMethod !== "crash") {
             setOrderStatus((pre) => ({
                 ...pre,

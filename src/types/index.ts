@@ -79,11 +79,14 @@ export interface AccountData {
 export interface ServiceParams {
     headers: {
         token: string | undefined;
+        auth?: string;
+        accountUpdate?: string;
     };
     axiosJWT: any;
     orderBy?: string;
     sortBy?: string;
     page?: number;
+    status?: string;
 }
 
 export interface OrderStatus {

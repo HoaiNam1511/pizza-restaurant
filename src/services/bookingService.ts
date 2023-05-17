@@ -7,9 +7,10 @@ export const get = async ({
     orderBy,
     headers,
     axiosJWT,
+    status,
 }: globalInterface.ServiceParams) => {
     const res = await axiosJWT.get(
-        `/booking/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`,
+        `/booking/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}&status=${status}`,
         { headers }
     );
     return res.data;

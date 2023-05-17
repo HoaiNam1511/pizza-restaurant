@@ -8,19 +8,22 @@ interface SelectActionProps {
     data: { title: string; value: string }[];
     name: string;
     currentStatus: string;
+    className?: string;
 }
+
 function SelectAction({
     onChange,
     type,
     data,
     name,
     currentStatus,
+    className,
 }: SelectActionProps) {
     return (
         <select
             name={name}
             onChange={(e) => onChange(e)}
-            className={cx("select", type)}
+            className={cx("select", type, className)}
             value={currentStatus}
         >
             {data.map((status, index) => (

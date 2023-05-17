@@ -3,6 +3,8 @@
 //Arrow
 .sort {
     margin-left: 10px;
+    display: flex;
+    flex-direction: column;
 }
 .arrow-up {
     @include arrow-up;

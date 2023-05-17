@@ -18,7 +18,10 @@ function ActionButton({
     type = "update",
 }: ActionButtonProps) {
     return (
-        <button className={cx("action-button_wrapper", type)} onClick={onClick}>
+        <button
+            className={cx("action-button_wrapper", type, className)}
+            onClick={onClick}
+        >
             {type === "update" && (
                 <EditIcon className={cx("icon-update")}></EditIcon>
             )}

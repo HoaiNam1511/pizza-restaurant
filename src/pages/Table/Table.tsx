@@ -73,12 +73,7 @@ function Table() {
     return (
         <div className={cx("row g-0", "wrapper")}>
             <div className={cx("table")}>
-                <div
-                    className={cx(
-                        "d-flex justify-content-between",
-                        "table-header"
-                    )}
-                >
+                <div className={cx("table-header")}>
                     <h2 className={cx("table-header_title")}>List Table</h2>
                     <select
                         className={cx("select")}
@@ -91,13 +86,7 @@ function Table() {
                 </div>
                 <section className={cx("row gx-0")}>
                     {tables.map((table, index) => (
-                        <div
-                            className={cx(
-                                "col-2 d-flex flex-column align-items-center",
-                                "item"
-                            )}
-                            key={index}
-                        >
+                        <div className={cx("col-2 ", "item")} key={index}>
                             <img src={tableImage} alt="" />
                             <h4
                                 className={cx(

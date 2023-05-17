@@ -35,7 +35,7 @@ function AccountModal() {
 
     const modalTitle = useSelector(selectorState.selectModalTitleStatus);
     const currentAccount = useSelector(selectorState.selectCurrentAccount);
-    const accountUpdate = useSelector(selectorState.selectAccoutDetail);
+    const accountUpdate = useSelector(selectorState.selectAccountDetail);
     //Handle when input change
     const handleInputChange = (
         event:
@@ -76,6 +76,7 @@ function AccountModal() {
                 {
                     headers: {
                         token: currentAccount?.token,
+                        accountUpdate: accountUpdate?.username,
                     },
                     axiosJWT: axiosCreateJWT(
                         currentAccount,
@@ -134,7 +135,7 @@ function AccountModal() {
                 email: accountUpdate.email,
                 username: accountUpdate.username,
                 password: accountUpdate.password,
-                status: accountUpdate.status,
+                status: accountUpdate.status ? 1 : 0,
                 role: accountUpdate?.role[0]?.id,
             });
         }

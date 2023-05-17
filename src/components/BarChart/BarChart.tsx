@@ -40,13 +40,13 @@ function BarChart() {
 
     //Chart scale Y
     const handleChartScaleMax = (): void => {
-        const maxQuantity = chartData.reduce(
+        const maxQuantity: number = chartData.reduce(
             (max: number, item: globalInterface.ChartData) => {
                 return item?.quantity > max ? item?.quantity : max;
             },
             0
         );
-        const roundedNumber = Math.ceil(maxQuantity / 10) * 10;
+        const roundedNumber: number = Math.ceil(maxQuantity / 10) * 10;
         setChartScaleMax(roundedNumber);
     };
 
@@ -60,7 +60,7 @@ function BarChart() {
                         labels: chartData
                             .reverse()
                             .map((row) =>
-                                moment(row.date, "YYYY.MM.DD").format("DD-MM")
+                                moment(row.date, "DD-MM-YYYY").format("DD-MM")
                             ),
                         datasets: [
                             {
@@ -82,7 +82,12 @@ function BarChart() {
 
                             title: {
                                 display: true,
-                                text: "Order Quantity of Weeks",
+                                text: "Quantity product sale 7 days",
+                                font: {
+                                    size: 14,
+                                    family: "arial",
+                                    weight: "500",
+                                },
                             },
                         },
                         scales: {

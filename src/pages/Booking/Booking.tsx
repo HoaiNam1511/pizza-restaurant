@@ -48,6 +48,7 @@ function Booking() {
     const [booking, setBooking] = useState<globalInterface.Booking | null>(
         null
     );
+    const [filter, setFilter] = useState<string>("");
     const pageChange = useSelector(selectorState.selectCurrentPage);
     const reload = useSelector(selectorState.selectReload);
     const currentAccount = useSelector(selectorState.selectCurrentAccount);
@@ -65,6 +66,7 @@ function Booking() {
                 page: pageChange,
                 orderBy,
                 sortBy,
+                status: filter,
                 headers: {
                     token: currentAccount?.token,
                 },
@@ -103,17 +105,20 @@ function Booking() {
             tableId: booking.table_id,
         };
 
-        if (["done", "cancel"].includes(event.target.value)) {
-            const answer = window.confirm(
-                `Are you sure? booking will be disable when status is ${event.target.value}`
-            );
-            if (answer) {
+        if (!["done", "cancel"].includes(booking.booking_status)) {
+            if (["done", "cancel"].includes(event.target.value)) {
+                const answer = window.confirm(
+                    `Are you sure? booking will be disable when status is ${event.target.value}`
+                );
+                if (answer) {
+                    setBooking(newBooking);
+                }
+            } else {
                 setBooking(newBooking);
             }
-        } else {
-            setBooking(newBooking);
         }
     };
+
     const updateBooking = async (): Promise<void> => {
         try {
             if (booking && booking.id !== undefined) {
@@ -150,7 +155,7 @@ function Booking() {
 
     useEffect(() => {
         getBooking({});
-    }, [reload, pageChange]);
+    }, [reload, pageChange, filter]);
 
     useEffect(() => {
         updateBooking();
@@ -169,7 +174,40 @@ function Booking() {
                     <h2 className={cx("content-header_title")}>
                         Table booking
                     </h2>
-                    <div>
+                    <div className={cx("right-block")}>
+                        <select
+                            id="select"
+                            name="bookingStatus"
+                            onChange={(e) => setFilter(e.target.value)}
+                            value={filter}
+                            className={cx("select")}
+                        >
+                            <option value="">All</option>
+                            {bookingStatusData.map(
+                                (
+                                    item: globalInterface.OrderStatusData,
+                                    index
+                                ) => (
+                                    <option value={item.value}>
+                                        {item.title}
+                                    </option>
+                                )
+                            )}
+                        </select>
+                        {/* <SelectAction
+                            className={cx("select")}
+                            data={[
+                                {
+                                    title: "All",
+                                    value: "",
+                                },
+                                ...bookingStatusData,
+                            ]}
+                            name="bookingStatus"
+                            onChange={(e) => setFilter(e.target.value)}
+                            currentStatus={filter}
+                            type={filter}
+                        /> */}
                         <button
                             onClick={handleCreateBooking}
                             type="button"

@@ -26,9 +26,7 @@ function LineChart() {
     const [chartOrderData, setCharOrderData] = useState<
         globalInterface.ChartData[]
     >([]);
-    const [chartLabel, setChartLabel] = useState<globalInterface.ChartData[]>(
-        []
-    );
+
     const [chartBookingData, setChartBookingData] = useState<
         globalInterface.ChartData[]
     >([]);
@@ -55,50 +53,31 @@ function LineChart() {
     const handleRemoveDuplicate = (
         data: globalInterface.ChartData[]
     ): globalInterface.ChartData[] => {
-        if (chartLabel[0]?.quantity === 0) {
-            data.map((item: globalInterface.ChartData) => {
-                const index = chartLabel.findIndex(
-                    (item1: globalInterface.ChartData) =>
-                        item1.date === item.date
-                );
-                if (index >= 0) {
-                    chartLabel[index].quantity += 1;
-                }
+        let dateArray: globalInterface.ChartData[] = [];
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+            let startOfWeek: any | string = new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate() - i
+            );
+
+            dateArray.push({
+                date: moment(startOfWeek).format("DD-MM-YYYY"),
+                quantity: 0,
             });
         }
 
-        return chartLabel;
-        // let filterDuplicateDate = data.reduce(
-        //     (
-        //         acc: globalInterface.ChartData[],
-        //         curr: globalInterface.ChartData
-        //     ) => {
-        //         const index = acc.findIndex(
-        //             (item: globalInterface.ChartData) => item.date === curr.date
-        //         );
-
-        //         if (index >= 0) {
-        //             acc[index].quantity += 1;
-        //         } else {
-        //             acc.push({ date: curr.date, quantity: 1 });
-        //         }
-
-        //         return acc;
-        //     },
-        //     []
-        // );
-
-        // const addDate = chartLabel.map((date: string) => {
-        //     if (filterDuplicateDate.find((item: any) => item.date !== date)) {
-        //         filterDuplicateDate.push({
-        //             date: date,
-        //             quantity: 0,
-        //         });
-        //     }
-        // });
-        // console.log(filterDuplicateDate);
-
-        //return filterDuplicateDate;
+        data.map((item: globalInterface.ChartData) => {
+            const index = dateArray.findIndex(
+                (item1: globalInterface.ChartData) => item1.date === item.date
+            );
+            if (index >= 0) {
+                dateArray[index].quantity += 1;
+            }
+            return [];
+        });
+        return dateArray;
     };
 
     const handleChartScaleMax = (data: globalInterface.ChartData[]): void => {
@@ -124,6 +103,7 @@ function LineChart() {
                     token: currentAccount?.token,
                 },
             });
+
         handleTotalProductOrder(res);
         const result = handleTotalProductOrder(res);
         dispatch(setOrderWeek(result));
@@ -154,43 +134,21 @@ function LineChart() {
         });
 
         const filterDuplicateDate = handleRemoveDuplicate(result);
-        //setChartBookingData(filterDuplicateDate);
-        // handleChartScaleMax(result);
+        setChartBookingData(filterDuplicateDate);
+        handleChartScaleMax(result);
     };
-
-    const createChartLabel = () => {
-        let dateArray = [];
-        const today = new Date();
-        for (let i = 0; i < 7; i++) {
-            let startOfWeek: any | string = new Date(
-                today.getFullYear(),
-                today.getMonth(),
-                today.getDate() - i
-            );
-
-            dateArray.push({
-                date: moment(startOfWeek).format("DD-MM-YYYY"),
-                quantity: 0,
-            });
-        }
-        setChartLabel(dateArray);
-    };
-
-    useEffect(() => {
-        createChartLabel();
-    }, []);
 
     useEffect(() => {
         getOrderOfWeek();
         getBookingOfWeek();
-    }, [chartLabel]);
+    }, []);
 
     useEffect(() => {
         if (lineChartRef.current) {
             const lineChart = new Chart(lineChartRef.current, {
                 type: "line",
                 data: {
-                    labels: chartLabel
+                    labels: chartOrderData
                         .reverse()
                         .map((item: globalInterface.ChartData) =>
                             moment(item.date, "DD-MM-YYY").format("DD-MM")
@@ -205,7 +163,9 @@ function LineChart() {
                         },
                         {
                             label: "Booking",
-                            data: chartBookingData.map((row) => row.quantity),
+                            data: chartBookingData
+                                .reverse()
+                                .map((row) => row.quantity),
                             tension: 0.2,
                             borderWidth: 1.5,
                             pointBorderWidth: 0.5,
@@ -224,7 +184,12 @@ function LineChart() {
 
                         title: {
                             display: true,
-                            text: "Quantity Booking of Weeks",
+                            text: "Quantity booking and order 7 days",
+                            font: {
+                                size: 14,
+                                family: "arial",
+                                weight: "500",
+                            },
                         },
                     },
                     scales: {

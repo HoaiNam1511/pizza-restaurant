@@ -34,5 +34,5 @@ export const selectCurrentAccount = (state: RootState) =>
 export const selectInfoAccountReset = (state: RootState) =>
     state.authReducer.infoAccountReset;
 //Select account
-export const selectAccoutDetail = (state: RootState) =>
+export const selectAccountDetail = (state: RootState) =>
     state.accountReducer.accountDetail;

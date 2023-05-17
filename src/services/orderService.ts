@@ -28,12 +28,8 @@ export const getOrderOfWeek = async ({
     axiosJWT,
     headers,
 }: globalInterface.ServiceParams) => {
-    const result = await axiosJWT.get(
-        "/order/order-weeks",
-        {},
-        {
-            headers,
-        }
-    );
+    const result = await axiosJWT.get("/order/order-week", {
+        headers,
+    });
     return result.data;
 };

@@ -34,16 +34,20 @@ function Login() {
     const { username, password } = account;
 
     const handleLogin = async () => {
-        dispatch(loginStart());
-        try {
-            const result = await authService.login(account);
-            if (result.data?.token) {
-                dispatch(loginSuccess(result?.data));
-                navigate(config.routes.dashboard);
+        if (String(account.password).length >= 8) {
+            dispatch(loginStart());
+            try {
+                const result = await authService.login(account);
+                if (result.data?.token) {
+                    dispatch(loginSuccess(result?.data));
+                    navigate(config.routes.dashboard);
+                }
+                setMessage(result.data.message);
+            } catch (error) {
+                dispatch(loginFail());
             }
-            setMessage(result.data.message);
-        } catch (error) {
-            dispatch(loginFail());
+        } else {
+            setMessage("Password require 8 character");
         }
     };
 
