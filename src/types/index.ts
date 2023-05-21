@@ -15,11 +15,11 @@ export interface Sort {
     sortBy?: string;
 }
 
-export interface ServiceParams {
+export interface ServiceParams extends OrderFilter {
     headers: {
         token: string | undefined;
         auth?: string;
-        accountUpdate?: string;
+        actionAccount?: string;
     };
     axiosJWT: any;
     orderBy?: string;
@@ -213,6 +213,11 @@ export interface OrderWeekProduct {
 
 export interface OrderWeek extends BookingWeek {
     products: OrderWeekProduct[];
+}
+
+export interface OrderFilter {
+    orderStatus?: string;
+    paymentStatus?: string;
 }
 
 //Booking

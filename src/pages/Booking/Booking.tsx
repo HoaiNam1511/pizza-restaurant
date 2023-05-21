@@ -7,19 +7,13 @@ import styles from "./Booking.module.scss";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
 import SelectAction from "../../components/SelectAction/SelectAction";
 import BookingModal from "../../components/Modals/BookingModal/BookingModal";
+import Loading from "../../components/Loading/Loading";
 
 import * as bookingService from "../../services/bookingService";
 import * as selectorState from "../../redux/selector";
 import * as globalInterface from "../../types";
+import * as globalAction from "../../redux/slice/globalSlice";
 
-import {
-    modalCreate,
-    openModal,
-    modalUpdate,
-    reloadFunc,
-    addPageCount,
-    setToast,
-} from "../../redux/slice/globalSlice";
 import { setBookingDetail } from "../../redux/slice/bookingSlice";
 import { ActionButton } from "../../components/Buttons";
 import { bookingStatusData, columnTable } from "../../data/index";
@@ -41,11 +35,12 @@ function Booking() {
     const currentAccount: globalInterface.CurrentAccount | null = useSelector(
         selectorState.selectCurrentAccount
     );
+    const [loading, setLoading] = useState<boolean>(false);
 
     //Handle create booking
     const handleCreateBooking = (): void => {
-        dispatch(modalCreate());
-        dispatch(openModal());
+        dispatch(globalAction.modalCreate());
+        dispatch(globalAction.openModal());
     };
 
     //Api: get booking
@@ -54,6 +49,7 @@ function Booking() {
         sortBy = "id",
     }): Promise<void> => {
         try {
+            setLoading(true);
             const res = await bookingService.get({
                 page: pageChange,
                 orderBy,
@@ -68,9 +64,10 @@ function Booking() {
                     loginSuccess
                 ),
             });
+            setLoading(false);
             setListBooking(res.data);
-            dispatch(setToast(res));
-            dispatch(addPageCount(res.totalPage));
+            dispatch(globalAction.setToast(res));
+            dispatch(globalAction.addPageCount(res.totalPage));
         } catch (err) {
             console.log(err);
         }
@@ -119,6 +116,7 @@ function Booking() {
     const updateBooking = async (): Promise<void> => {
         try {
             if (booking && booking.id !== undefined) {
+                dispatch(globalAction.setLoadingRequestOverlay());
                 const res = await bookingService.update(
                     {
                         headers: {
@@ -135,8 +133,9 @@ function Booking() {
                         id: booking.id,
                     }
                 );
-                dispatch(reloadFunc());
-                dispatch(setToast(res));
+                dispatch(globalAction.setLoadingResponseOverlay());
+                dispatch(globalAction.reloadFunc());
+                dispatch(globalAction.setToast(res));
             }
         } catch (err) {
             console.log(err);
@@ -148,8 +147,8 @@ function Booking() {
         booking: globalInterface.BookingData
     ): void => {
         dispatch(setBookingDetail(booking));
-        dispatch(modalUpdate());
-        dispatch(openModal());
+        dispatch(globalAction.modalUpdate());
+        dispatch(globalAction.openModal());
     };
 
     useEffect(() => {
@@ -240,59 +239,71 @@ function Booking() {
                                 <th className={cx("col-1")}>Action</th>
                             </tr>
                         </thead>
-                        {listBooking?.map((booking: any, index) => (
-                            <tbody key={index}>
-                                <tr className={cx("row g-0")}>
-                                    <th scope="row" className={cx("col-1")}>
-                                        {index}
-                                    </th>
 
-                                    <td className={cx("col-2")}>
-                                        {booking?.customer_name}
-                                    </td>
-                                    <td className={cx("col-2")}>
-                                        {booking?.customer_phone}
-                                    </td>
-                                    <td className={cx("col-2")}>
-                                        {booking?.table.table_title}
-                                    </td>
-                                    <td className={cx("col-1")}>
-                                        {moment(
-                                            booking?.booking_date,
-                                            "YYYY-MM-DD"
-                                        ).format("DD/MM/YYYY")}
-                                    </td>
-                                    <td className={cx("col-1")}>
-                                        {moment(
-                                            booking?.booking_time,
-                                            "HH:mm "
-                                        ).format("hh:mm A")}
-                                    </td>
-                                    <td className={cx("col-2")}>
-                                        <SelectAction
-                                            data={bookingStatusData}
-                                            name="bookingStatus"
-                                            onChange={(e) =>
-                                                handleSelectChange(e, booking)
-                                            }
-                                            currentStatus={
-                                                booking.booking_status
-                                            }
-                                            type={booking.booking_status}
-                                        />
-                                    </td>
-                                    <td className={cx("col-1")}>
-                                        <ActionButton
-                                            onClick={() =>
-                                                handleUpdateBooking(booking)
-                                            }
-                                            type="update"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        ))}
+                        {!loading &&
+                            listBooking?.map((booking: any, index) => (
+                                <tbody key={index}>
+                                    <tr className={cx("row g-0")}>
+                                        <th scope="row" className={cx("col-1")}>
+                                            {index}
+                                        </th>
+
+                                        <td className={cx("col-2")}>
+                                            {booking?.customer_name}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            {booking?.customer_phone}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            {booking?.table.table_title}
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            {moment(
+                                                booking?.booking_date,
+                                                "YYYY-MM-DD"
+                                            ).format("DD/MM/YYYY")}
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            {moment(
+                                                booking?.booking_time,
+                                                "HH:mm "
+                                            ).format("hh:mm A")}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            <SelectAction
+                                                data={bookingStatusData}
+                                                name="bookingStatus"
+                                                onChange={(e) =>
+                                                    handleSelectChange(
+                                                        e,
+                                                        booking
+                                                    )
+                                                }
+                                                currentStatus={
+                                                    booking.booking_status
+                                                }
+                                                type={booking.booking_status}
+                                            />
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            <ActionButton
+                                                onClick={() =>
+                                                    handleUpdateBooking(booking)
+                                                }
+                                                type="update"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            ))}
                     </table>
+
+                    {loading && (
+                        <Loading
+                            size="medium"
+                            className={cx("content-loading")}
+                        />
+                    )}
                 </section>
             </div>
         </div>

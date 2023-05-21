@@ -10,9 +10,9 @@ import InputForm from "../../InputForm/InputForm";
 import * as categoryService from "../../../services/categoryService";
 import * as globalInterface from "../../../types";
 import * as selectorState from "../../../redux/selector";
+import * as globalAction from "../../../redux/slice/globalSlice";
 
 import { createProduct, updateProduct } from "../../../services/productService";
-import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { axiosCreateJWT } from "../../../util/jwtRequest";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 import CheckboxCustom from "../../CheckboxCustom/CheckboxCustom";
@@ -81,6 +81,7 @@ function CategoryModal() {
     //Api
     const create = async (): Promise<void> => {
         try {
+            dispatch(globalAction.setLoadingRequest());
             addProductFormData();
             const res = await createProduct(
                 {
@@ -97,9 +98,10 @@ function CategoryModal() {
                     product: productData,
                 }
             );
-            dispatch(reloadFunc());
-            dispatch(setToast(res));
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
             setProduct(productInit);
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -107,6 +109,7 @@ function CategoryModal() {
 
     const update = async (): Promise<void> => {
         try {
+            dispatch(globalAction.setLoadingRequest());
             addProductFormData();
             const res = await updateProduct(
                 {
@@ -124,8 +127,9 @@ function CategoryModal() {
                     product: productData,
                 }
             );
-            dispatch(reloadFunc());
-            dispatch(setToast(res));
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -195,7 +199,11 @@ function CategoryModal() {
     }, [productDetail]);
 
     return (
-        <Modal headerTitle="Product">
+        <Modal
+            headerTitle="Product"
+            modalCrud={true}
+            onClick={handleCreateProduct}
+        >
             <div
                 className={cx(
                     "d-flex flex-column justify-content-between",
@@ -284,13 +292,6 @@ function CategoryModal() {
                         </div>
                     </div>
                 </form>
-                <button
-                    type="button"
-                    className={cx("btn btn-outline-primary", "btn-add")}
-                    onClick={handleCreateProduct}
-                >
-                    {modalTitle}
-                </button>
             </div>
         </Modal>
     );

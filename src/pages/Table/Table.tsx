@@ -8,6 +8,7 @@ import tableImage from "../../assets/image/wooden-dining-table-chairs-isolated-w
 import * as bookingServices from "../../services/bookingService";
 import * as globalInterface from "../../types";
 import * as selectorState from "../../redux/selector";
+import Loading from "../../components/Loading/Loading";
 
 import { axiosCreateJWT } from "../../util/jwtRequest";
 import { loginSuccess } from "../../redux/slice/authSlice";
@@ -21,10 +22,12 @@ function Table() {
     );
     const [tables, setTable] = useState<globalInterface.Table[]>([]);
     const [status, setStatus] = useState<boolean | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const getTable = async (): Promise<void> => {
         try {
             let response: globalInterface.Table[];
+            setLoading(true);
             const body = {
                 headers: { token: currentAccount?.token },
                 axiosJWT: axiosCreateJWT(
@@ -40,6 +43,7 @@ function Table() {
                     used: status,
                 });
             }
+            setLoading(false);
             setTable(response);
         } catch (err) {
             console.log(err);
@@ -80,20 +84,27 @@ function Table() {
                         <option value="available">Available</option>
                     </select>
                 </div>
-                <section className={cx("row gx-0")}>
-                    {tables.map((table, index) => (
-                        <div className={cx("col-2 ", "item")} key={index}>
-                            <img src={tableImage} alt="" />
-                            <h4
-                                className={cx(
-                                    table.table_used ? "used" : "available"
-                                )}
-                            >
-                                {table.table_used ? "Used" : "Available"}
-                            </h4>
-                            <h3>{`${table.table_title}-${table.table_size} people`}</h3>
-                        </div>
-                    ))}
+                <section className={cx("row gx-0", "content")}>
+                    {loading ? (
+                        <Loading
+                            size="medium"
+                            className={cx("content-loading")}
+                        />
+                    ) : (
+                        tables.map((table, index) => (
+                            <div className={cx("col-2 ", "item")} key={index}>
+                                <img src={tableImage} alt="" />
+                                <h4
+                                    className={cx(
+                                        table.table_used ? "used" : "available"
+                                    )}
+                                >
+                                    {table.table_used ? "Used" : "Available"}
+                                </h4>
+                                <h3>{`${table.table_title}-${table.table_size} people`}</h3>
+                            </div>
+                        ))
+                    )}
                 </section>
             </div>
         </div>

@@ -14,6 +14,9 @@ export const selectPageCount = (state: RootState) =>
     state.globalReducer.pageCount;
 export const selectCurrentPage = (state: RootState) => state.globalReducer.page;
 export const selectToast = (state: RootState) => state.globalReducer.toast;
+export const selectLoading = (state: RootState) => state.globalReducer.loading;
+export const selectLoadingOverlay = (state: RootState) =>
+    state.globalReducer.loadingOverlay;
 
 //Select category
 export const selectCategoryDetail = (state: RootState) =>

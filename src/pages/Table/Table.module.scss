@@ -35,6 +35,16 @@
         margin-top: 20px;
     }
 
+    .content {
+        .content-loading {
+            @include content-loading;
+            position: relative;
+            left: 50%;
+            transform: translateX(-$loading-medium);
+            margin-top: 130px;
+        }
+    }
+
     img {
         width: 70%;
     }

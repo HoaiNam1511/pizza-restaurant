@@ -5,23 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./Product.module.scss";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
 import ProductModal from "../../components/Modals/ProductModal/ProductModal";
+import Loading from "../../components/Loading/Loading";
 
 import * as productService from "../../services/productService";
 import * as globalInterface from "../../types";
 import * as staticData from "../../data";
-
-import {
-    modalUpdate,
-    modalCreate,
-    reloadFunc,
-    openModal,
-    setToast,
-} from "../../redux/slice/globalSlice";
-import {
-    selectReload,
-    selectCurrentPage,
-    selectCurrentAccount,
-} from "../../redux/selector";
+import * as globalAction from "../../redux/slice/globalSlice";
+import * as selectorState from "../../redux/selector";
 import { setProductDetail } from "../../redux/slice/productSlice";
 import { ActionButton } from "../../components/Buttons/index";
 import { addPageCount } from "../../redux/slice/globalSlice";
@@ -39,15 +29,18 @@ function Product() {
     const [products, setProducts] = useState<globalInterface.Product<string>[]>(
         []
     );
-    const reload: boolean = useSelector(selectReload);
-    const pageChange: number = useSelector(selectCurrentPage);
-    const currentAccount: globalInterface.CurrentAccount | null =
-        useSelector(selectCurrentAccount);
+    const [loading, setLoading] = useState<boolean>(false);
+    const reload: boolean = useSelector(selectorState.selectReload);
+    const pageChange: number = useSelector(selectorState.selectCurrentPage);
+    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
+        selectorState.selectCurrentAccount
+    );
 
     const getAllProduct = async ({
         sortBy = "id",
         orderBy = "DESC",
     }: globalInterface.Sort): Promise<void> => {
+        setLoading(true);
         const allProduct = await productService.getAllProduct({
             page: pageChange,
             sortBy,
@@ -57,14 +50,15 @@ function Product() {
             },
             axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
         });
+        setLoading(false);
         setProducts(allProduct.data);
         dispatch(addPageCount(allProduct.totalPage));
     };
 
     //Handle create
     const handleCreateProduct = (): void => {
-        dispatch(modalCreate());
-        dispatch(openModal());
+        dispatch(globalAction.modalCreate());
+        dispatch(globalAction.openModal());
     };
 
     //Handle update
@@ -72,27 +66,33 @@ function Product() {
         product: globalInterface.Product<string>
     ): void => {
         dispatch(setProductDetail(product));
-        dispatch(modalUpdate());
-        dispatch(openModal());
+        dispatch(globalAction.modalUpdate());
+        dispatch(globalAction.openModal());
     };
 
     //Handle update
     const handleDeleteProduct = async (id: number): Promise<void> => {
-        const res = await productService.deleteProduct(
-            {
-                axiosJWT: axiosCreateJWT(
-                    currentAccount,
-                    dispatch,
-                    loginSuccess
-                ),
-                headers: {
-                    token: currentAccount?.token,
+        dispatch(globalAction.setLoadingRequestOverlay());
+        try {
+            const res = await productService.deleteProduct(
+                {
+                    axiosJWT: axiosCreateJWT(
+                        currentAccount,
+                        dispatch,
+                        loginSuccess
+                    ),
+                    headers: {
+                        token: currentAccount?.token,
+                    },
                 },
-            },
-            { id: id }
-        );
-        dispatch(reloadFunc());
-        dispatch(setToast(res));
+                { id: id }
+            );
+            dispatch(globalAction.setLoadingResponseOverlay());
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     //Sort
@@ -161,46 +161,54 @@ function Product() {
                                 <th className={cx("col-3")}>Action</th>
                             </tr>
                         </thead>
-                        {products?.map((product, index) => (
-                            <tbody key={index}>
-                                <tr className={cx("row g-0")}>
-                                    <th scope="row" className={cx("col-1")}>
-                                        {index}
-                                    </th>
-                                    <td className={cx("col-3")}>
-                                        <img
-                                            className={cx("image")}
-                                            src={`${process.env.REACT_APP_SERVER_URL}/images/${product.image}`}
-                                            alt=""
-                                        />
-                                    </td>
-                                    <td className={cx("col-3")}>
-                                        {product.name}
-                                    </td>
-                                    <td className={cx("col-2")}>
-                                        {product.price}
-                                    </td>
-                                    <td className={cx("col-3")}>
-                                        <ActionButton
-                                            onClick={() =>
-                                                handleUpdateProduct(product)
-                                            }
-                                            type="update"
-                                        />
+                        {!loading &&
+                            products?.map((product, index) => (
+                                <tbody key={index}>
+                                    <tr className={cx("row g-0")}>
+                                        <th scope="row" className={cx("col-1")}>
+                                            {index}
+                                        </th>
+                                        <td className={cx("col-3")}>
+                                            <img
+                                                className={cx("image")}
+                                                src={`${process.env.REACT_APP_SERVER_URL}/images/${product.image}`}
+                                                alt=""
+                                            />
+                                        </td>
+                                        <td className={cx("col-3")}>
+                                            {product.name}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            {product.price}
+                                        </td>
+                                        <td className={cx("col-3")}>
+                                            <ActionButton
+                                                onClick={() =>
+                                                    handleUpdateProduct(product)
+                                                }
+                                                type="update"
+                                            />
 
-                                        <ActionButton
-                                            onClick={() =>
-                                                handleDeleteProduct(
-                                                    product.id ?? 0
-                                                )
-                                            }
-                                            type="delete"
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        ))}
+                                            <ActionButton
+                                                onClick={() =>
+                                                    handleDeleteProduct(
+                                                        product.id ?? 0
+                                                    )
+                                                }
+                                                type="delete"
+                                            />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            ))}
                     </table>
+
+                    {loading && (
+                        <Loading
+                            size="medium"
+                            className={cx("content-loading")}
+                        />
+                    )}
                 </section>
             </div>
         </div>

@@ -60,13 +60,16 @@ function Sidebar({ className }: SidebarProps) {
                         key={index}
                         to={item.to}
                         className={(nav) =>
-                            cx("nav-item", className, { active: nav.isActive })
+                            cx("nav-item", className, {
+                                active: nav.isActive,
+                            })
                         }
                     >
                         <item.icon className={cx("nav-icon")} />
                         <p className={cx("nav-title")}>{item.title}</p>
                     </NavLink>
                 ))}
+
                 <NavLink
                     to={""}
                     className={(nav) => cx("nav-item", className)}

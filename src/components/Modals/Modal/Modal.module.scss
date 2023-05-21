@@ -4,6 +4,8 @@
 .overlay {
     @include overlay;
     transition: all 0.2s linear;
+    position: fixed;
+    z-index: 1000;
 }
 
 .modal-wrapper {
@@ -38,7 +40,38 @@
     }
 
     .modal-content {
-        padding: 0 15px 15px;
+        padding: 0 15px;
+    }
+
+    .footer {
+        display: flex;
+        padding: 5px 15px;
+        .btn-action {
+            @include primary-btn_outline;
+            min-width: 80px;
+            padding: 0 40px;
+            text-transform: capitalize;
+            margin: 10px 0px;
+
+            &:hover {
+                .btn-title .modal-loading {
+                    border: 3px solid #fff;
+                    border-top: 3px solid $primary-color;
+                }
+            }
+
+            .btn-title {
+                display: inline-block;
+                position: relative;
+                text-align: center;
+
+                .modal-loading {
+                    border: 3px solid $primary-color;
+                    border-top: 3px solid transparent;
+                    transition: all 0.2s ease;
+                }
+            }
+        }
     }
 }
 

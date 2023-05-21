@@ -117,21 +117,21 @@ function Home() {
 
     const cardData: globalInterface.CardData[] = [
         {
-            mainTitle: convertToUSD(orderWeek.subTotal),
+            mainTitle: convertToUSD(orderWeek.subTotal) || 0,
             titleHeader: "Order total",
             footerTitle: "Increase by 70%",
             Icon: AttachMoneyIcon,
             cardColor: "#140062",
         },
         {
-            mainTitle: orderWeek.orderQuantity,
+            mainTitle: orderWeek.orderQuantity || 0,
             titleHeader: "Order quantity",
             footerTitle: "Increase by 56%",
             Icon: TrendingUpIcon,
             cardColor: "#9101b9",
         },
         {
-            mainTitle: orderWeek.productSale,
+            mainTitle: orderWeek.productSale || 0,
             titleHeader: "Product sale",
             footerTitle: "Increase by 23%",
             Icon: BookmarkBorderIcon,
@@ -139,8 +139,9 @@ function Home() {
         },
         {
             mainTitle: `${
-                tableData?.filter((table) => table.table_used === false).length
-            }/${tableData?.length}`,
+                tableData?.filter((table) => table.table_used === false)
+                    .length || 0
+            }/${tableData?.length || 0}`,
             titleHeader: "Table available",
             footerTitle: `Table size ${mostAvailableTable} is a most table available`,
             Icon: TableBarOutlinedIcon,

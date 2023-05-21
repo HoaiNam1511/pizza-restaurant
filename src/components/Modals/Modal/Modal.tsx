@@ -2,13 +2,12 @@ import classNames from "classnames/bind";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 
+import * as selectorState from "../../../redux/selector";
+
 import styles from "./Modal.module.scss";
+import Loading from "../../Loading/Loading";
 
 import { closeModal } from "../../../redux/slice/globalSlice";
-import {
-    selectStatusModal,
-    selectModalTitleStatus,
-} from "../../../redux/selector";
 
 const cx = classNames.bind(styles);
 
@@ -16,15 +15,29 @@ interface modalPropsType {
     children?: React.ReactNode;
     className?: string;
     headerTitle: string;
+    modalCrud?: boolean;
+    onClick?: () => void;
 }
 function Modal({
     children,
     className,
     headerTitle = "Create",
+    modalCrud = false,
+    onClick,
 }: modalPropsType) {
     const dispatch = useDispatch();
-    const modalStatus = useSelector(selectStatusModal);
-    const modalTitle = useSelector(selectModalTitleStatus);
+    const modalStatus = useSelector(selectorState.selectStatusModal);
+    const modalTitle = useSelector(selectorState.selectModalTitleStatus);
+    const selectLoading = useSelector(selectorState.selectLoading);
+
+    const actionOnClick = (): void => {
+        if (onClick) {
+            if (!selectLoading) {
+                onClick();
+            }
+        }
+    };
+
     return (
         <div
             className={cx("d-flex justify-content-center align-items-center", {
@@ -46,6 +59,7 @@ function Modal({
                         className={cx("header-title")}
                     >{`${modalTitle} ${headerTitle}`}</h3>
                     <button
+                        disabled={selectLoading}
                         className={cx("header_btn")}
                         onClick={() => dispatch(closeModal())}
                     >
@@ -53,6 +67,26 @@ function Modal({
                     </button>
                 </div>
                 <div className={cx("modal-content")}>{children}</div>
+                <div className={cx("modal-footer")}></div>
+                <footer className={cx("footer")}>
+                    {modalCrud && (
+                        <button
+                            type="button"
+                            className={cx(
+                                "btn btn-outline-primary",
+                                "btn-action"
+                            )}
+                            onClick={actionOnClick}
+                        >
+                            <span className={cx("btn-title")}>
+                                {modalTitle}
+                                {selectLoading && (
+                                    <Loading className={cx("modal-loading")} />
+                                )}
+                            </span>
+                        </button>
+                    )}
+                </footer>
             </div>
         </div>
     );

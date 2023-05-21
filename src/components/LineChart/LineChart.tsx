@@ -108,12 +108,11 @@ function LineChart() {
                 },
             });
 
-        handleTotalProductOrder(res);
         const result: globalInterface.ChartData[] =
             handleTotalProductOrder(res);
-        dispatch(setOrderWeek(result));
         const filterDuplicateDate: globalInterface.ChartData[] =
             handleRemoveDuplicate(result);
+        dispatch(setOrderWeek(filterDuplicateDate));
         setCharOrderData(filterDuplicateDate);
         handleChartScaleMax(filterDuplicateDate);
     };

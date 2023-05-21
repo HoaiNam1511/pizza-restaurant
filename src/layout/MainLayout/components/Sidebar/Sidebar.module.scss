@@ -29,27 +29,29 @@
     //Nav
     .nav-list {
         margin-top: 20px;
-    }
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: space-between;
+        .nav-item {
+            display: flex;
+            align-items: center;
+            position: relative;
+            height: 43px;
+            width: 100%;
+            padding: 0px 16px;
+            text-decoration: none;
+            color: #697a8d;
+            // transition-duration: 0.3s;
+            // transition-property: color, background-color;
+            &:hover {
+                background-color: #f8f8f9;
+                color: #566a7f;
+            }
 
-    .nav-item {
-        display: flex;
-        align-items: center;
-        position: relative;
-        height: 43px;
-        width: 100%;
-        padding: 0px 16px;
-        text-decoration: none;
-        color: #697a8d;
-        // transition-duration: 0.3s;
-        // transition-property: color, background-color;
-        &:hover {
-            background-color: #f8f8f9;
-            color: #566a7f;
-        }
-
-        &:nth-last-child(1) {
-            position: absolute;
-            bottom: 20px;
+            &:nth-last-child(1) {
+                position: absolute;
+                bottom: 20px;
+            }
         }
     }
 

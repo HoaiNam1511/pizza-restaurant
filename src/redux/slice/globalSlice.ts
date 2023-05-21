@@ -7,6 +7,8 @@ export interface GlobalState {
     page: number;
     modalIsOpen: boolean;
     toast: globalInterface.Toast;
+    loading: boolean;
+    loadingOverlay: boolean;
 }
 
 const initialState: GlobalState = {
@@ -19,6 +21,8 @@ const initialState: GlobalState = {
         message: "",
         action: "",
     },
+    loading: false,
+    loadingOverlay: false,
 };
 
 export const globalSlice = createSlice({
@@ -63,6 +67,22 @@ export const globalSlice = createSlice({
         ) => {
             state.toast = actions.payload;
         },
+
+        setLoadingRequest(state: GlobalState) {
+            state.loading = true;
+        },
+
+        setLoadingResponse(state: GlobalState) {
+            state.loading = false;
+        },
+
+        setLoadingRequestOverlay(state: GlobalState) {
+            state.loadingOverlay = true;
+        },
+
+        setLoadingResponseOverlay(state: GlobalState) {
+            state.loadingOverlay = false;
+        },
     },
 });
 
@@ -75,6 +95,10 @@ export const {
     closeModal,
     openModal,
     setToast,
+    setLoadingRequest,
+    setLoadingResponse,
+    setLoadingRequestOverlay,
+    setLoadingResponseOverlay,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

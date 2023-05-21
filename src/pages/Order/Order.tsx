@@ -7,22 +7,20 @@ import OrderModal from "../../components/Modals/OrderModal/OrderModal";
 import ArrowSort from "../../components/ArrowSort/ArrowSort";
 import styles from "./Order.module.scss";
 import SelectAction from "../../components/SelectAction/SelectAction";
+import Loading from "../../components/Loading/Loading";
+import { Filter } from "./Filter";
 
 import * as orderService from "../../services/orderService";
 import * as globalInterface from "../../types";
 import * as selectorState from "../../redux/selector";
+import * as globalAction from "../../redux/slice/globalSlice";
 
 import { orderStatusData, paymentStatusData, columnTable } from "../../data";
 import { ActionButton } from "../../components/Buttons";
 import { setOrderDetail } from "../../redux/slice/orderSlice";
-import {
-    openModal,
-    addPageCount,
-    setToast,
-    reloadFunc,
-} from "../../redux/slice/globalSlice";
 import { axiosCreateJWT } from "../../util/jwtRequest";
 import { loginSuccess } from "../../redux/slice/authSlice";
+import { convertToUSD } from "../../custom";
 const cx = classNames.bind(styles);
 
 const selectName = {
@@ -41,6 +39,7 @@ function Order() {
     const currentAccount: globalInterface.CurrentAccount | null = useSelector(
         selectorState.selectCurrentAccount
     );
+    const [loading, setLoading] = useState<boolean>(false);
     const reload: boolean = useSelector(selectorState.selectReload);
     const [orders, setOrders] = useState<globalInterface.Order[]>([]);
     const [orderStatus, setOrderStatus] = useState<globalInterface.OrderStatus>(
@@ -53,25 +52,30 @@ function Order() {
     );
 
     //Api
-    const getOrder = async ({
-        orderBy = "DESC",
-        sortBy = "id",
-    }: globalInterface.Sort): Promise<void> => {
+    const getOrder = async (
+        { orderBy = "DESC", sortBy = "id" }: globalInterface.Sort,
+        { orderStatus = "", paymentStatus = "" }: globalInterface.OrderFilter
+    ): Promise<void> => {
+        setLoading(true);
         const response = await orderService.getAll({
             page: pageChange,
             sortBy,
             orderBy,
+            orderStatus,
+            paymentStatus,
             headers: {
                 token: currentAccount?.token,
             },
             axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
         });
+        setLoading(false);
         setOrders(response.data);
-        dispatch(addPageCount(response.totalPage));
+        dispatch(globalAction.addPageCount(response.totalPage));
     };
 
     const updateOrderStatus = async (): Promise<void> => {
         if (orderStatus.orderStatus) {
+            dispatch(globalAction.setLoadingRequestOverlay());
             const res = await orderService.updateOrder(
                 {
                     axiosJWT: axiosCreateJWT(
@@ -88,15 +92,16 @@ function Order() {
                     order: orderStatus,
                 }
             );
-            dispatch(reloadFunc());
-            dispatch(setToast(res));
+            dispatch(globalAction.setLoadingResponseOverlay());
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
         }
     };
 
     //Show detail order
     const handleDetailOrder = (order: globalInterface.Order): void => {
         dispatch(setOrderDetail(order));
-        dispatch(openModal());
+        dispatch(globalAction.openModal());
     };
 
     //Handle change status
@@ -105,27 +110,26 @@ function Order() {
         paymentMethod: string,
         orderItem: globalInterface.Order
     ): void => {
-        setOrderStatus({
-            ...orderStatus,
+        const objOrder = {
             id: orderItem.id,
             paymentMethod: paymentMethod,
             orderStatus: orderItem.order_status,
             paymentStatus: orderItem.payment_status,
-        });
+        };
 
         if (paymentMethod !== paymentCrash) {
-            setOrderStatus((pre) => ({
-                ...pre,
+            setOrderStatus({
+                ...objOrder,
                 [event.target.name]: event.target.value,
-            }));
+            });
         } else if (
             paymentMethod === paymentCrash &&
             selectName.orderStatus === event.target.name
         ) {
-            setOrderStatus((pre) => ({
-                ...pre,
+            setOrderStatus({
+                ...objOrder,
                 [event.target.name]: event.target.value,
-            }));
+            });
         } else {
             alert("Payment status only change when shipped");
         }
@@ -133,14 +137,17 @@ function Order() {
 
     //Handle sort
     const handleSort = ({ orderBy, sortBy }: globalInterface.Sort): void => {
-        getOrder({ orderBy, sortBy });
+        getOrder({ orderBy, sortBy }, {});
     };
 
     useEffect(() => {
-        getOrder({
-            orderBy: "DESC",
-            sortBy: "id",
-        });
+        getOrder(
+            {
+                orderBy: "DESC",
+                sortBy: "id",
+            },
+            {}
+        );
     }, [pageChange, reload]);
 
     useEffect(() => {
@@ -158,6 +165,17 @@ function Order() {
                     )}
                 >
                     <h2 className={cx("order-header_title")}>Table order</h2>
+                    <Filter
+                        onFilterClick={(value) =>
+                            getOrder(
+                                {},
+                                {
+                                    orderStatus: value.orderStatus,
+                                    paymentStatus: value.paymentStatus,
+                                }
+                            )
+                        }
+                    ></Filter>
                 </div>
                 <section className={cx("table-container")}>
                     <table className={cx("table")}>
@@ -183,69 +201,100 @@ function Order() {
                                 <th className={cx("col-1")}>Action</th>
                             </tr>
                         </thead>
-                        {orders?.map((order, index) => (
-                            <tbody key={index}>
-                                <tr className={cx("row g-0")}>
-                                    <th scope="row" className={cx("col-2")}>
-                                        {order.order_code.toUpperCase()}
-                                    </th>
 
-                                    <td className={cx("col-2")}>
-                                        {moment(
-                                            order.order_date,
-                                            "YYYY-MM-DD"
-                                        ).format("DD/MM/YYYY")}
-                                    </td>
+                        {!loading && (
+                            <tbody>
+                                {orders?.map((order, index) => (
+                                    <tr className={cx("row g-0")} key={index}>
+                                        <th scope="row" className={cx("col-2")}>
+                                            {order.order_code.toUpperCase()}
+                                        </th>
 
-                                    <td className={cx("col-1")}>
-                                        {order.products.length}
-                                    </td>
-                                    <td className={cx("col-1")}>{100}</td>
-                                    <td className={cx("col-2")}>
-                                        {order.customer.email}
-                                    </td>
-                                    <td className={cx("col-2")}>
-                                        <SelectAction
-                                            name={selectName.orderStatus}
-                                            onChange={(event) =>
-                                                handleSelectChange(
-                                                    event,
-                                                    order.payment_method,
-                                                    order
+                                        <td className={cx("col-2")}>
+                                            {moment(
+                                                order.order_date,
+                                                "YYYY-MM-DD"
+                                            ).format("DD/MM/YYYY")}
+                                        </td>
+
+                                        <td className={cx("col-1")}>
+                                            {order.products.length}
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            {convertToUSD(
+                                                order.products.reduce(
+                                                    (
+                                                        acc: number,
+                                                        curr: any
+                                                    ) => {
+                                                        return (
+                                                            acc +
+                                                            curr.price *
+                                                                curr
+                                                                    .order_details
+                                                                    .quantity
+                                                        );
+                                                    },
+                                                    0
                                                 )
-                                            }
-                                            data={orderStatusData}
-                                            type={order.order_status}
-                                            currentStatus={order.order_status}
-                                        />
-                                    </td>
-                                    <td className={cx("col-1")}>
-                                        <SelectAction
-                                            name={selectName.paymentStatus}
-                                            onChange={(event) =>
-                                                handleSelectChange(
-                                                    event,
-                                                    order.payment_method,
-                                                    order
-                                                )
-                                            }
-                                            data={paymentStatusData}
-                                            type={order.payment_status}
-                                            currentStatus={order.payment_status}
-                                        />
-                                    </td>
-                                    <td className={cx("col-1")}>
-                                        <ActionButton
-                                            onClick={() =>
-                                                handleDetailOrder(order)
-                                            }
-                                            type="detail"
-                                        />
-                                    </td>
-                                </tr>
+                                            )}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            {order.customer.email}
+                                        </td>
+                                        <td className={cx("col-2")}>
+                                            <SelectAction
+                                                name={selectName.orderStatus}
+                                                onChange={(event) =>
+                                                    handleSelectChange(
+                                                        event,
+                                                        order.payment_method,
+                                                        order
+                                                    )
+                                                }
+                                                data={orderStatusData}
+                                                type={order.order_status}
+                                                currentStatus={
+                                                    order.order_status
+                                                }
+                                            />
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            <SelectAction
+                                                name={selectName.paymentStatus}
+                                                onChange={(event) =>
+                                                    handleSelectChange(
+                                                        event,
+                                                        order.payment_method,
+                                                        order
+                                                    )
+                                                }
+                                                data={paymentStatusData}
+                                                type={order.payment_status}
+                                                currentStatus={
+                                                    order.payment_status
+                                                }
+                                            />
+                                        </td>
+                                        <td className={cx("col-1")}>
+                                            <ActionButton
+                                                onClick={() =>
+                                                    handleDetailOrder(order)
+                                                }
+                                                type="detail"
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
-                        ))}
+                        )}
                     </table>
+                    {loading && (
+                        <Loading
+                            size="medium"
+                            className={cx("content-loading")}
+                        />
+                    )}
                 </section>
             </div>
         </div>

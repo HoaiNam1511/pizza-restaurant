@@ -6,17 +6,24 @@ import * as globalInterface from "../../types";
 import * as selectorState from "../../redux/selector";
 
 import styles from "./Login.module.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
 import CheckboxCustom from "../../components/CheckboxCustom/CheckboxCustom";
+import Loading from "../../components/Loading/Loading";
+import {
+    setLoadingRequest,
+    setLoadingResponse,
+} from "../../redux/slice/globalSlice";
 
 const cx = classNames.bind(styles);
 
 function ResetPassword() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [status, setStatus] = useState<string>();
     const [showPassword, setShowPassword] = useState<string>("password");
+    const selectLoading: boolean = useSelector(selectorState.selectLoading);
     const setInfoAccountReset = useSelector(
         selectorState.selectInfoAccountReset
     );
@@ -46,6 +53,7 @@ function ResetPassword() {
     const handleResetPassword = async () => {
         if (String(newPassword.password).length >= 8) {
             if (password === confirmPassword) {
+                dispatch(setLoadingRequest());
                 try {
                     const result = await authService.reset({
                         username: setInfoAccountReset?.username as string,
@@ -56,6 +64,7 @@ function ResetPassword() {
                     if (result.status) {
                         setStatus(result.status);
                         setMessage(result.message);
+                        dispatch(setLoadingResponse());
                     }
                 } catch (err) {
                     console.log(err);
@@ -131,7 +140,12 @@ function ResetPassword() {
                         className={cx("btn btn-primary", "btn-login")}
                         onClick={handleResetPassword}
                     >
-                        Reset
+                        <span className={cx("btn-title")}>
+                            Reset
+                            {selectLoading && (
+                                <Loading className={cx("login-loading")} />
+                            )}
+                        </span>
                     </button>
                 </form>
             </div>

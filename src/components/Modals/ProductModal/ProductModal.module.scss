@@ -93,11 +93,4 @@ $main-border: 1px solid #cfcfcf;
         color: $text-color;
         transform: translateY(-50%);
     }
-
-    .btn-add {
-        margin-top: 15px;
-        @include primary-btn_outline;
-        width: 80px;
-        text-transform: capitalize;
-    }
 }

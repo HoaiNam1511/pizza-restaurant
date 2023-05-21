@@ -10,6 +10,7 @@ import InputForm from "../../InputForm/InputForm";
 import * as categoryService from "../../../services/categoryService";
 import * as selectorState from "../../../redux/selector";
 import * as globalInterface from "../../../types";
+import * as globalAction from "../../../redux/slice/globalSlice";
 
 import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { categoryInit } from "../../../pages/Category/Category";
@@ -56,6 +57,8 @@ function CategoryModal() {
     const create = async (): Promise<void> => {
         try {
             addFormData();
+
+            dispatch(globalAction.setLoadingRequest());
             const res = await categoryService.createCategory(
                 {
                     axiosJWT: axiosCreateJWT(
@@ -74,6 +77,7 @@ function CategoryModal() {
             dispatch(reloadFunc());
             dispatch(setToast(res));
             setCategory(categoryInit);
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -83,6 +87,7 @@ function CategoryModal() {
     const update = async (): Promise<void> => {
         try {
             addFormData();
+            dispatch(globalAction.setLoadingRequest());
             const res = await categoryService.updateCategory(
                 {
                     axiosJWT: axiosCreateJWT(
@@ -101,6 +106,7 @@ function CategoryModal() {
             );
             dispatch(reloadFunc());
             dispatch(setToast(res));
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -127,7 +133,11 @@ function CategoryModal() {
     }, [categoryDetail]);
 
     return (
-        <Modal headerTitle="Category">
+        <Modal
+            headerTitle="Category"
+            modalCrud={true}
+            onClick={handleCreateCategory}
+        >
             <div
                 className={cx(
                     "d-flex flex-column justify-content-between",
@@ -151,13 +161,6 @@ function CategoryModal() {
                         image={image}
                     />
                 </form>
-                <button
-                    type="button"
-                    className={cx("btn btn-outline-primary", "btn-add")}
-                    onClick={handleCreateCategory}
-                >
-                    {modalTitle}
-                </button>
             </div>
         </Modal>
     );

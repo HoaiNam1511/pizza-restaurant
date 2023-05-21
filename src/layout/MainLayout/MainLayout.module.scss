@@ -1,6 +1,29 @@
 .wrapper {
     background-color: #f5f5f9;
 
+    .overlay {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .overlay-loading {
+            height: 50px;
+            width: 50px;
+            border-width: 4px;
+            left: calc(50% - 25px);
+            z-index: 2;
+        }
+    }
+
     .right-content {
     }
 

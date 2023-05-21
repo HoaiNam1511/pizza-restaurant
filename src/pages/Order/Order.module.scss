@@ -20,8 +20,33 @@
         @include primary-btn_outline;
     }
 
+    .content-loading {
+        @include content-loading;
+    }
+
     //Table
     .table-container {
         margin-top: 30px;
+    }
+
+    .block-wrapper {
+        display: flex;
+        .select {
+            @include input-custom_1;
+            width: 125px;
+        }
+
+        .select + .select {
+            margin-left: 10px;
+        }
+
+        .content-header_btn {
+            @include primary-btn;
+        }
+
+        .content-header_btn--outline {
+            @include primary-btn_outline;
+            margin-left: 10px;
+        }
     }
 }

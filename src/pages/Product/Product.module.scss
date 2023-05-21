@@ -20,6 +20,10 @@
         @include primary-btn_outline;
     }
 
+    .content-loading {
+        @include content-loading;
+    }
+
     //Table
     .table-container {
         margin-top: 30px;

@@ -17,6 +17,7 @@ import {
 } from "../../../redux/selector";
 import { partySizeData } from "../../../data/index";
 import * as globalInterface from "../../../types";
+import * as globalAction from "../../../redux/slice/globalSlice";
 import { axiosCreateJWT } from "../../../util/jwtRequest";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 
@@ -71,12 +72,14 @@ function BookingModal() {
 
     //Create booking
     const create = async (): Promise<void> => {
+        dispatch(globalAction.setLoadingRequest());
         try {
             const res = await bookingService.create(booking);
             dispatch(reloadFunc());
             dispatch(setToast(res));
             setBooking(bookingInit);
             getTable();
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -84,6 +87,7 @@ function BookingModal() {
 
     //Update booking
     const update = async (): Promise<void> => {
+        dispatch(globalAction.setLoadingRequest());
         try {
             const res = await bookingService.update(
                 {
@@ -103,6 +107,7 @@ function BookingModal() {
             );
             dispatch(reloadFunc());
             dispatch(setToast(res));
+            dispatch(globalAction.setLoadingResponse());
             getTable();
         } catch (err) {
             console.log(err);
@@ -228,7 +233,11 @@ function BookingModal() {
     }, []);
 
     return (
-        <Modal headerTitle="Booking ">
+        <Modal
+            headerTitle="Booking "
+            modalCrud={true}
+            onClick={handleCreateBooking}
+        >
             <div
                 className={cx(
                     "d-flex flex-column justify-content-between",
@@ -349,13 +358,6 @@ function BookingModal() {
                         </div>
                     </div>
                 </form>
-                <button
-                    type="button"
-                    className={cx("btn btn-outline-primary", "btn-add")}
-                    onClick={handleCreateBooking}
-                >
-                    {modalTitle}
-                </button>
             </div>
         </Modal>
     );

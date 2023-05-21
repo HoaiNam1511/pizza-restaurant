@@ -11,9 +11,9 @@ import * as selectorState from "../../../redux/selector";
 import * as globalInterface from "../../../types";
 import * as authServices from "../../../services/authService";
 import * as accountServices from "../../../services/accountService";
+import * as globalAction from "../../../redux/slice/globalSlice";
 
 import { axiosCreateJWT } from "../../../util/jwtRequest";
-import { reloadFunc, setToast } from "../../../redux/slice/globalSlice";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const accountInit: globalInterface.AccountState = {
@@ -56,6 +56,7 @@ function AccountModal() {
     //Api: create account
     const create = async (): Promise<void> => {
         try {
+            dispatch(globalAction.setLoadingRequest());
             const res: globalInterface.Toast = await accountServices.create(
                 {
                     headers: {
@@ -69,9 +70,10 @@ function AccountModal() {
                 },
                 { account }
             );
-            dispatch(reloadFunc());
-            dispatch(setToast(res));
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
             setAccount(accountInit);
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -80,11 +82,12 @@ function AccountModal() {
     //Api: update account
     const update = async (): Promise<void> => {
         try {
+            dispatch(globalAction.setLoadingRequest());
             const res = await accountServices.update(
                 {
                     headers: {
                         token: currentAccount?.token,
-                        accountUpdate: accountUpdate?.username,
+                        actionAccount: accountUpdate?.username,
                     },
                     axiosJWT: axiosCreateJWT(
                         currentAccount,
@@ -97,9 +100,10 @@ function AccountModal() {
                     account,
                 }
             );
-            dispatch(reloadFunc());
-            dispatch(setToast(res));
+            dispatch(globalAction.reloadFunc());
+            dispatch(globalAction.setToast(res));
             setAccount(accountInit);
+            dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);
         }
@@ -158,7 +162,11 @@ function AccountModal() {
     }, []);
 
     return (
-        <Modal headerTitle="Account">
+        <Modal
+            headerTitle="Account"
+            modalCrud={true}
+            onClick={handleCreateAndUpdate}
+        >
             <div className={cx("wrapper-content")}>
                 <form className={cx("form")} action="">
                     <div className={cx("form-item")}>
@@ -238,13 +246,6 @@ function AccountModal() {
                         </select>
                     </div>
                 </form>
-                <button
-                    type="button"
-                    className={cx("btn btn-outline-primary", "btn-add")}
-                    onClick={handleCreateAndUpdate}
-                >
-                    {modalTitle}
-                </button>
             </div>
         </Modal>
     );

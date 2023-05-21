@@ -1,0 +1,40 @@
+@import "../../scss/mixin";
+@import "../../components/GlobalStyle/GlobalStyle.scss";
+
+.loading {
+    border: 3px solid #f1f3f4;
+    border-top: 3px solid #5a5d62;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+.small {
+    position: absolute;
+    width: $loading-small !important;
+    height: $loading-small !important;
+    right: -30px;
+    top: calc(50% - 10px);
+}
+
+.medium {
+    width: $loading-medium !important;
+    height: $loading-medium !important;
+}
+
+.large {
+    width: $loading-large !important;
+    height: $loading-large !important;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

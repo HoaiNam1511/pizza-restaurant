@@ -26,14 +26,16 @@
             .content-header_btn {
                 @include primary-btn;
             }
-        }
-
-        .content-header_btn--outline {
-            @include primary-btn_outline;
-            margin-left: 10px;
+            .content-header_btn--outline {
+                @include primary-btn_outline;
+                margin-left: 10px;
+            }
         }
     }
 
+    .content-loading {
+        @include content-loading;
+    }
     //Table
     .table-container {
         margin-top: 30px;

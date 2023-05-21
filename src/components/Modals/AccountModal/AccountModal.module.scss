@@ -39,11 +39,4 @@
     .input {
         @include input-custom_1;
     }
-
-    .btn-add {
-        margin-top: 15px;
-        @include primary-btn_outline;
-        width: 80px;
-        text-transform: capitalize;
-    }
 }

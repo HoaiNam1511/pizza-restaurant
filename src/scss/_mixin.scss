@@ -77,3 +77,9 @@ $arrow-color: #3d3d3d;
     @include arrow;
     border-top: 7px solid $arrow-color;
 }
+
+@mixin content-loading {
+    margin-top: 100px;
+    border: 3px solid $primary-color;
+    border-top: 3px solid transparent;
+}

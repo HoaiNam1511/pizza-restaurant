@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import * as authService from "../../services/authService";
 import * as globalInterface from "../../types";
+import * as selectorState from "../../redux/selector";
 
 import styles from "./Login.module.scss";
 import {
@@ -13,8 +14,14 @@ import {
     loginFail,
     setInfoAccountReset,
 } from "../../redux/slice/authSlice";
+import {
+    setLoadingRequest,
+    setLoadingResponse,
+} from "../../redux/slice/globalSlice";
 import config from "../../config";
 import CheckboxCustom from "../../components/CheckboxCustom/CheckboxCustom";
+import Loading from "../../components/Loading/Loading";
+
 const cx = classNames.bind(styles);
 
 function Login() {
@@ -23,6 +30,7 @@ function Login() {
     const [message, setMessage] = useState<string>();
     const [form, setForm] = useState<number>(0);
     const [showPassword, setShowPassword] = useState<string>("password");
+    const selectLoading: boolean = useSelector(selectorState.selectLoading);
     const [account, setAccount] = useState<globalInterface.Account>({
         username: "",
         password: "",
@@ -36,8 +44,10 @@ function Login() {
     const handleLogin = async (): Promise<void> => {
         if (String(account.password).length >= 8) {
             dispatch(loginStart());
+            dispatch(setLoadingRequest());
             try {
                 const result = await authService.login(account);
+                dispatch(setLoadingResponse());
                 if (result.data?.token) {
                     dispatch(loginSuccess(result?.data));
                     navigate(config.routes.dashboard);
@@ -53,7 +63,9 @@ function Login() {
 
     const handleForgotPassword = async (): Promise<void> => {
         try {
+            dispatch(setLoadingRequest());
             const result = await authService.forgot(emailObj);
+            dispatch(setLoadingResponse());
             if (result.message) {
                 setMessage(result.message);
             } else {
@@ -143,7 +155,15 @@ function Login() {
                             className={cx("btn btn-primary", "btn-login")}
                             onClick={handleLogin}
                         >
-                            Login
+                            <span className={cx("btn-title")}>
+                                Login
+                                {selectLoading && (
+                                    <Loading
+                                        className={cx("login-loading")}
+                                        size="small"
+                                    />
+                                )}
+                            </span>
                         </button>
                     </form>
                 ) : (
@@ -171,7 +191,15 @@ function Login() {
                             className={cx("btn btn-primary", "btn-login")}
                             onClick={handleForgotPassword}
                         >
-                            Find
+                            <span className={cx("btn-title")}>
+                                Find
+                                {selectLoading && (
+                                    <Loading
+                                        className={cx("login-loading")}
+                                        size="small"
+                                    />
+                                )}
+                            </span>
                         </button>
                     </form>
                 )}
