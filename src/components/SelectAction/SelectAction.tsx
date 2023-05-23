@@ -26,7 +26,7 @@ function SelectAction({
             className={cx("select", type, className)}
             value={currentStatus}
         >
-            {data.map((status, index) => (
+            {data?.map((status, index) => (
                 <option value={status.value} key={index}>
                     {status.title}
                 </option>

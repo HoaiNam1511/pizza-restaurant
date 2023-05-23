@@ -189,7 +189,7 @@ function CategoryModal() {
                 image: productDetail.image,
                 categories:
                     productDetail.categories.length > 0
-                        ? productDetail.categories.map(
+                        ? productDetail.categories?.map(
                               (item: globalInterface.Category<string>) =>
                                   item.id
                           )
@@ -272,7 +272,7 @@ function CategoryModal() {
                         </label>
                         <div className={cx("row g-0", "category-group")}>
                             {categoryData.length > 0 &&
-                                categoryData.map((category, index) => (
+                                categoryData?.map((category, index) => (
                                     <CheckboxCustom
                                         key={index}
                                         className={cx("col-3")}

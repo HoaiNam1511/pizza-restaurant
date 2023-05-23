@@ -7,19 +7,13 @@ import tableImage from "../../assets/image/wooden-dining-table-chairs-isolated-w
 
 import * as bookingServices from "../../services/bookingService";
 import * as globalInterface from "../../types";
-import * as selectorState from "../../redux/selector";
 import Loading from "../../components/Loading/Loading";
 
-import { axiosCreateJWT } from "../../util/jwtRequest";
-import { loginSuccess } from "../../redux/slice/authSlice";
 import { addPageCount } from "../../redux/slice/globalSlice";
 
 const cx = classNames.bind(styles);
 function Table() {
     const dispatch = useDispatch();
-    const currentAccount: globalInterface.CurrentAccount | null = useSelector(
-        selectorState.selectCurrentAccount
-    );
     const [tables, setTable] = useState<globalInterface.Table[]>([]);
     const [status, setStatus] = useState<boolean | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,23 +22,20 @@ function Table() {
         try {
             let response: globalInterface.Table[];
             setLoading(true);
-            const body = {
-                headers: { token: currentAccount?.token },
-                axiosJWT: axiosCreateJWT(
-                    currentAccount,
-                    dispatch,
-                    loginSuccess
-                ),
-            };
             if (status === null) {
-                response = await bookingServices.getAllTable(body);
+                response = await bookingServices.getAllTable();
+                if (Array.isArray(response)) {
+                    setTable(response);
+                }
             } else {
-                response = await bookingServices.getTable(body, {
+                response = await bookingServices.getTable({
                     used: status,
                 });
+                if (Array.isArray(response)) {
+                    setTable(response);
+                }
             }
             setLoading(false);
-            setTable(response);
         } catch (err) {
             console.log(err);
         }
@@ -91,7 +82,8 @@ function Table() {
                             className={cx("content-loading")}
                         />
                     ) : (
-                        tables.map((table, index) => (
+                        Array.isArray(tables) &&
+                        tables?.map((table, index) => (
                             <div className={cx("col-2 ", "item")} key={index}>
                                 <img src={tableImage} alt="" />
                                 <h4

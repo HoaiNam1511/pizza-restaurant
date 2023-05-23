@@ -17,9 +17,10 @@ export interface Sort {
 
 export interface ServiceParams extends OrderFilter {
     headers: {
-        token: string | undefined;
+        token?: string | undefined;
         auth?: string;
         actionAccount?: string;
+        username?: string;
     };
     axiosJWT: any;
     orderBy?: string;

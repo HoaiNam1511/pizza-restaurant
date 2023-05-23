@@ -1,4 +1,4 @@
-import { httpRequestBooking } from "../util/httpRequest";
+import { httpRequestBooking, httpRequestTable } from "../util/httpRequest";
 import * as globalInterface from "../types";
 
 export const get = async ({
@@ -16,19 +16,13 @@ export const get = async ({
     return res.data;
 };
 
-export const getTable = async (
-    { headers, axiosJWT }: globalInterface.ServiceParams,
-    { used }: { used?: boolean }
-) => {
-    const res = await axiosJWT.get(`table/get?used=${used}`, { headers });
+export const getTable = async ({ used }: { used?: boolean }) => {
+    const res = await httpRequestTable.get(`/get?used=${used}`);
     return res.data;
 };
 
-export const getAllTable = async ({
-    headers,
-    axiosJWT,
-}: globalInterface.ServiceParams) => {
-    const res = await axiosJWT.get("/table/get", { headers });
+export const getAllTable = async () => {
+    const res = await httpRequestTable.get("/get");
     return res.data;
 };
 

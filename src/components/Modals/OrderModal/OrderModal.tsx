@@ -30,7 +30,7 @@ function OrderModal() {
     //Set product when click to table
     const handleProductOnClick = (productArgument: any): void => {
         const valuesArray = Object.values(productArgument);
-        const newArr = productDetailList.map((item, index) => {
+        const newArr = productDetailList?.map((item, index) => {
             if (index < 5) {
                 return {
                     title: item.title,
@@ -121,7 +121,7 @@ function OrderModal() {
                                 {product.length > 0
                                     ? product
                                           .slice(0, product.length - 1)
-                                          .map(
+                                          ?.map(
                                               (
                                                   productDetail: Detail,
                                                   index: number
@@ -149,7 +149,7 @@ function OrderModal() {
                                           )
                                     : productDetailList
                                           .slice(0, product.length - 1)
-                                          .map((productDetail, index) => (
+                                          ?.map((productDetail, index) => (
                                               <tr
                                                   className={cx("row g-0")}
                                                   key={index}

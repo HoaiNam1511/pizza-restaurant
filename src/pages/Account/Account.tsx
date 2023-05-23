@@ -104,7 +104,6 @@ function User() {
         getAccount({ orderBy: "DESC", sortBy: "id" });
     }, [reload, pageChange]);
 
-    console.log(loading);
     return (
         <div className={cx("row g-0", "wrapper")}>
             <AccountModal />

@@ -9,7 +9,6 @@ export const getAll = async ({
     orderStatus,
     paymentStatus,
 }: globalInterface.ServiceParams) => {
-    console.log(orderStatus, paymentStatus);
     const result = await axiosJWT.get(
         `/order/get?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}&orderStatus=${orderStatus}&paymentStatus=${paymentStatus}`,
         { headers }

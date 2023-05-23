@@ -1,11 +1,18 @@
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { httpRequest } from "./httpRequest";
+import * as globalInterface from "../types";
 
-const refreshToken = async () => {
+const refreshToken = async (currentAccount: globalInterface.CurrentAccount) => {
     try {
         //If have cookies will get cookies to request
-        const res = await httpRequest.post("auth/refresh");
+        const res = await httpRequest.post(
+            "auth/refresh",
+            {},
+            {
+                headers: { username: currentAccount.account.username },
+            }
+        );
         return res.data;
     } catch (err) {
         console.log(err);
@@ -28,12 +35,14 @@ export const axiosCreateJWT = (
             const decodeToken: any = jwt_decode(currentAccount?.token);
             //Check token had expired
             if (decodeToken.exp < date.getTime() / 1000) {
-                const data = await refreshToken();
+                const data = await refreshToken(currentAccount);
                 //New access token
                 const refreshUser = {
                     ...currentAccount,
                     token: data?.token,
                 };
+                // console.log("This is new token");
+                // console.log(data);
                 dispatch(stateSuccess(refreshUser));
                 config.headers["token"] = data?.token;
             }

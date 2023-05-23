@@ -117,17 +117,7 @@ function BookingModal() {
     //Get table available
     const getTable = async () => {
         try {
-            const response = await bookingService.getTable(
-                {
-                    headers: { token: currentAccount?.token },
-                    axiosJWT: axiosCreateJWT(
-                        currentAccount,
-                        dispatch,
-                        loginSuccess
-                    ),
-                },
-                { used: false }
-            );
+            const response = await bookingService.getTable({ used: false });
             setTable(response);
             setBooking({
                 ...booking,
@@ -160,7 +150,7 @@ function BookingModal() {
             }
         }
 
-        const result = partySizeData.map((item) => {
+        const result = partySizeData?.map((item) => {
             if (Object.keys(quantityObj).includes(item.value.toString())) {
                 return {
                     ...item,
@@ -286,7 +276,7 @@ function BookingModal() {
                                 onChange={(e) => handleEventChange(e)}
                                 value={bookingStatus}
                             >
-                                {bookingStatusData.map((item, index) => (
+                                {bookingStatusData?.map((item, index) => (
                                     <option value={item.value} key={index}>
                                         {item.title}
                                     </option>
@@ -327,7 +317,7 @@ function BookingModal() {
                                 onChange={(e) => handlePartySizeChange(e)}
                                 value={partySize}
                             >
-                                {quantityTable.map((item, index) => (
+                                {quantityTable?.map((item, index) => (
                                     <option
                                         ref={refSelect}
                                         value={item.value}
@@ -349,7 +339,7 @@ function BookingModal() {
                                 onChange={(e) => handleEventChange(e)}
                                 value={tableId}
                             >
-                                {tableFilter.map((table, index) => (
+                                {tableFilter?.map((table, index) => (
                                     <option value={table.id} key={index}>
                                         {`${table.table_title} - ${table.table_size} people`}
                                     </option>

@@ -33,7 +33,7 @@ function Home() {
             productSale: 0,
         }
     );
-    const [tableData, setTableData] = useState<globalInterface.Table[]>();
+    const [tableData, setTableData] = useState<globalInterface.Table[]>([]);
     const [mostAvailableTable, setMostAvailableTable] = useState<number>(0);
     const currentAccount: globalInterface.CurrentAccount | null = useSelector(
         selectorState.selectCurrentAccount
@@ -52,9 +52,9 @@ function Home() {
         let productSale: number = 0;
 
         //Handle order subtotal and quantity product of order
-        const subTotalOrder: number = res.reduce(
+        const subTotalOrder: number = res?.reduce(
             (total: number, item: globalInterface.OrderWeek) => {
-                const sumOrder = item.products.reduce(
+                const sumOrder = item.products?.reduce(
                     (acc: number, curr: globalInterface.OrderWeekProduct) => {
                         productSale += curr.quantity;
                         return acc + curr.price * curr.quantity;
@@ -75,14 +75,13 @@ function Home() {
 
     //Get quantity of table
     const getTable = async (): Promise<void> => {
-        const res = await bookingService.getAllTable({
-            axiosJWT: axiosCreateJWT(currentAccount, dispatch, loginSuccess),
-            headers: {
-                token: currentAccount?.token,
-            },
-        });
-        setTableData(res);
-        handleMostAvailable(res);
+        try {
+            const res = await bookingService.getAllTable();
+            setTableData(res);
+            handleMostAvailable(res);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     //Handle get most table available
@@ -138,10 +137,11 @@ function Home() {
             cardColor: "#00a293",
         },
         {
-            mainTitle: `${
-                tableData?.filter((table) => table.table_used === false)
-                    .length || 0
-            }/${tableData?.length || 0}`,
+            // mainTitle: `${
+            //     tableData?.filter((table) => table.table_used === false)
+            //         .length || 0
+            // }/${tableData?.length || 0}`,
+            mainTitle: `0`,
             titleHeader: "Table available",
             footerTitle: `Table size ${mostAvailableTable} is a most table available`,
             Icon: TableBarOutlinedIcon,
@@ -162,7 +162,7 @@ function Home() {
                 </section>
 
                 <section className={cx("section-2")}>
-                    {cardData.map((card, index) => (
+                    {cardData?.map((card, index) => (
                         <Card
                             key={index}
                             Icon={card.Icon}

@@ -181,7 +181,7 @@ function Booking() {
                             className={cx("select")}
                         >
                             <option value="">All</option>
-                            {bookingStatusData.map(
+                            {bookingStatusData?.map(
                                 (
                                     item: globalInterface.OrderStatusData,
                                     index
@@ -255,7 +255,7 @@ function Booking() {
                                             {booking?.customer_phone}
                                         </td>
                                         <td className={cx("col-2")}>
-                                            {booking?.table.table_title}
+                                            {booking?.table?.table_title}
                                         </td>
                                         <td className={cx("col-1")}>
                                             {moment(

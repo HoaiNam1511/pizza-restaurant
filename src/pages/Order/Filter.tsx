@@ -41,7 +41,7 @@ export function Filter({ onFilterClick }: FilterProps) {
                 className={cx("select")}
             >
                 <option value="">All</option>
-                {staticData.orderStatusData.map(
+                {staticData.orderStatusData?.map(
                     (item: globalInterface.OrderStatusData, index: number) => (
                         <option value={item.value} key={index}>
                             {item.title}
@@ -57,7 +57,7 @@ export function Filter({ onFilterClick }: FilterProps) {
                 className={cx("select")}
             >
                 <option value="">All</option>
-                {staticData.paymentStatusData.map(
+                {staticData.paymentStatusData?.map(
                     (item: globalInterface.OrderStatusData, index: number) => (
                         <option value={item.value} key={index}>
                             {item.title}

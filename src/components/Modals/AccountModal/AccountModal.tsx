@@ -212,7 +212,7 @@ function AccountModal() {
                             onChange={(e) => handleInputChange(e)}
                             value={status}
                         >
-                            {staticData.accountStatus.map((item, index) => (
+                            {staticData.accountStatus?.map((item, index) => (
                                 <option
                                     ref={refSelect}
                                     value={item.value}
@@ -234,7 +234,7 @@ function AccountModal() {
                             onChange={(e) => handleInputChange(e)}
                             value={role}
                         >
-                            {roles.map((role, index) => (
+                            {roles?.map((role, index) => (
                                 <option
                                     ref={refSelect}
                                     value={role.id}

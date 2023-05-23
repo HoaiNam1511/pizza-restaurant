@@ -24,7 +24,7 @@ function App() {
                     ></Route>
                     <Route path={"/"} element={<Login></Login>}></Route>
                     {currentAccount?.account ? (
-                        routers.map((route, index) => {
+                        routers?.map((route, index) => {
                             let Layout = MainLayout;
                             if (route.layout === null) {
                                 Layout = MainLayout;

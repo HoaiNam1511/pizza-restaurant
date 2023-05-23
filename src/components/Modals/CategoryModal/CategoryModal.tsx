@@ -150,7 +150,7 @@ function CategoryModal() {
                             label="Name"
                             name="name"
                             onChange={(e) => handleInputChange(e)}
-                            placeholder="Email"
+                            placeholder="Category name"
                             type="text"
                             value={name || ""}
                         />

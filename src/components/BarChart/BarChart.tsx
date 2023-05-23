@@ -59,13 +59,13 @@ function BarChart() {
                     data: {
                         labels: chartData
                             .reverse()
-                            .map((row) =>
+                            ?.map((row) =>
                                 moment(row.date, "DD-MM-YYYY").format("DD-MM")
                             ),
                         datasets: [
                             {
                                 label: "Quantity",
-                                data: chartData.map((row) => row.quantity),
+                                data: chartData?.map((row) => row.quantity),
                                 barThickness: 40,
                             },
                         ],

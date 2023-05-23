@@ -55,7 +55,7 @@ function Sidebar({ className }: SidebarProps) {
             </div>
             <h3>{`Welcome ${currentAccount?.account.username}`}</h3>
             <nav className={cx("nav-list")}>
-                {staticData.navList.map((item, index) => (
+                {staticData.navList?.map((item, index) => (
                     <NavLink
                         key={index}
                         to={item.to}
