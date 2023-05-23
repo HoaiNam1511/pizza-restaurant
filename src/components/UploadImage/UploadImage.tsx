@@ -36,7 +36,7 @@ function UploadImage({ onChange, image }: UploadImageProps) {
                         className={cx("image")}
                         src={
                             typeof image === "string"
-                                ? `${process.env.REACT_APP_SERVER_URL}/images/${image}`
+                                ? image
                                 : URL.createObjectURL(image)
                         }
                         alt=""

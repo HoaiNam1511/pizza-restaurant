@@ -157,7 +157,7 @@ function Category() {
                                         <td className={cx("col-4")}>
                                             <img
                                                 className={cx("image")}
-                                                src={`${process.env.REACT_APP_SERVER_URL}/images/${category.image}`}
+                                                src={category.image}
                                                 alt=""
                                             />
                                         </td>

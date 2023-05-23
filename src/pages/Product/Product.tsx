@@ -171,7 +171,7 @@ function Product() {
                                         <td className={cx("col-3")}>
                                             <img
                                                 className={cx("image")}
-                                                src={`${process.env.REACT_APP_SERVER_URL}/images/${product.image}`}
+                                                src={product.image}
                                                 alt=""
                                             />
                                         </td>

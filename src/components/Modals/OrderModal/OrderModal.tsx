@@ -84,7 +84,7 @@ function OrderModal() {
                                             <td className={cx("col-5")}>
                                                 <img
                                                     className={cx("image")}
-                                                    src={`${process.env.REACT_APP_SERVER_URL}/images/${product.image}`}
+                                                    src={product.image}
                                                     alt=""
                                                 />
                                                 {product.name}
