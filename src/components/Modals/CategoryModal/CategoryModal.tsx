@@ -106,6 +106,7 @@ function CategoryModal() {
             );
             dispatch(reloadFunc());
             dispatch(setToast(res));
+            setCategory(categoryInit);
             dispatch(globalAction.setLoadingResponse());
         } catch (err) {
             console.log(err);

@@ -137,11 +137,12 @@ function Home() {
             cardColor: "#00a293",
         },
         {
-            // mainTitle: `${
-            //     tableData?.filter((table) => table.table_used === false)
-            //         .length || 0
-            // }/${tableData?.length || 0}`,
-            mainTitle: `0`,
+            mainTitle: Array.isArray(tableData)
+                ? `${
+                      tableData?.filter((table) => table?.table_used === false)
+                          .length || 0
+                  }/${tableData?.length || 0}`
+                : `0/0`,
             titleHeader: "Table available",
             footerTitle: `Table size ${mostAvailableTable} is a most table available`,
             Icon: TableBarOutlinedIcon,
