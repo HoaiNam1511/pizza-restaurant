@@ -86,26 +86,23 @@ function Home() {
 
     //Handle get most table available
     const handleMostAvailable = (tables: globalInterface.Table[]): void => {
-        let maxValue: number = 0;
-        const tableCounts: globalInterface.Table = tables?.reduce(
+        const tableCounts: { [key: string]: number } = tables?.reduce(
             (counts: any, table: globalInterface.Table) => {
-                if (counts[table.table_size]) {
-                    counts[table.table_size] += 1;
-                } else {
-                    counts[table.table_size] = 1;
+                if (!table.table_used) {
+                    if (counts[table.table_size]) {
+                        counts[table.table_size] += 1;
+                    } else {
+                        counts[table.table_size] = 1;
+                    }
                 }
                 return counts;
             },
             {}
         );
-
-        for (const value of Object.values(tableCounts)) {
-            const numericValue: number = Number(value);
-            if (numericValue > maxValue) {
-                maxValue = numericValue;
-            }
-        }
-        setMostAvailableTable(maxValue);
+        const maxKey = Object.keys(tableCounts).reduce((a: any, b: any) =>
+            tableCounts[a] > tableCounts[b] ? a : b
+        );
+        setMostAvailableTable(Number(maxKey));
     };
 
     useEffect(() => {

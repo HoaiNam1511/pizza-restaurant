@@ -28,29 +28,8 @@ function LineChart() {
     >([]);
     const currentAccount = useSelector(selectorState.selectCurrentAccount);
 
-    //Handle total product order 7 days
-    const handleTotalProductOrder = (
-        data: globalInterface.OrderWeek[]
-    ): globalInterface.ChartData[] => {
-        const result = data?.map((item: globalInterface.OrderWeek) => {
-            return {
-                date: item.date,
-                quantity: item?.products?.reduce(
-                    (acc: number, curr: globalInterface.OrderWeekProduct) => {
-                        return acc + curr.quantity;
-                    },
-                    0
-                ),
-            };
-        });
-
-        return result;
-    };
-
-    //Remove duplicate date from data
-    const handleRemoveDuplicate = (
-        data: globalInterface.ChartData[]
-    ): globalInterface.ChartData[] => {
+    //Function create array 7 days
+    const createArrayWeek = () => {
         let dateArray: globalInterface.ChartData[] = [];
 
         //Create new label and quantity for chart
@@ -67,17 +46,45 @@ function LineChart() {
                 quantity: 0,
             });
         }
+        return dateArray;
+    };
 
-        //Handle total quantity for chart
-        data.forEach((item: globalInterface.ChartData) => {
-            const index = dateArray.findIndex(
+    //Handle total product order of 7 days
+    const handleTotalProductOrder = (data: globalInterface.OrderWeek[]) => {
+        const arrWeek: globalInterface.ChartData[] = createArrayWeek();
+        data?.forEach((item: globalInterface.OrderWeek) => {
+            const index = arrWeek.findIndex(
                 (item1: globalInterface.ChartData) => item1.date === item.date
             );
             if (index >= 0) {
-                dateArray[index].quantity += 1;
+                arrWeek[index].quantity += item?.products?.reduce(
+                    (acc: number, curr: globalInterface.OrderWeekProduct) => {
+                        return acc + curr.quantity;
+                    },
+                    0
+                );
+            }
+            return arrWeek;
+        });
+        return arrWeek;
+    };
+
+    //Remove duplicate date from data
+    const handleRemoveDuplicate = (
+        data: globalInterface.ChartData[]
+    ): globalInterface.ChartData[] => {
+        const dataRemoveDuplicate: globalInterface.ChartData[] =
+            createArrayWeek();
+        //Handle total quantity for chart
+        data.forEach((item: globalInterface.ChartData) => {
+            const index = dataRemoveDuplicate.findIndex(
+                (item1: globalInterface.ChartData) => item1.date === item.date
+            );
+            if (index >= 0) {
+                dataRemoveDuplicate[index].quantity += 1;
             }
         });
-        return dateArray;
+        return dataRemoveDuplicate;
     };
 
     //Handle total max chart scale Y
@@ -97,23 +104,22 @@ function LineChart() {
     //Api: get order week
     const getOrderOfWeek = async (): Promise<void> => {
         try {
-            const res: globalInterface.OrderWeek[] =
-                await orderService.getOrderOfWeek({
-                    axiosJWT: axiosCreateJWT(
-                        currentAccount,
-                        dispatch,
-                        loginSuccess
-                    ),
-                    headers: {
-                        token: currentAccount?.token,
-                    },
-                });
+            const res = await orderService.getOrderOfWeek({
+                axiosJWT: axiosCreateJWT(
+                    currentAccount,
+                    dispatch,
+                    loginSuccess
+                ),
+                headers: {
+                    token: currentAccount?.token,
+                },
+            });
             if (Array.isArray(res)) {
                 const result: globalInterface.ChartData[] =
                     handleTotalProductOrder(res);
                 const filterDuplicateDate: globalInterface.ChartData[] =
-                    handleRemoveDuplicate(result);
-                dispatch(setOrderWeek(filterDuplicateDate));
+                    handleRemoveDuplicate(res);
+                dispatch(setOrderWeek(result));
                 setCharOrderData(filterDuplicateDate);
                 handleChartScaleMax(filterDuplicateDate);
             }
