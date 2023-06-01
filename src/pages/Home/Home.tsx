@@ -99,6 +99,7 @@ function Home() {
             },
             {}
         );
+
         const maxKey = Object.keys(tableCounts).reduce((a: any, b: any) =>
             tableCounts[a] > tableCounts[b] ? a : b
         );
